@@ -57,7 +57,7 @@ if hasLog==True:
     if "Trees slimmend" in l:
       firstIndex=loglines.index(l)
   for l in loglines[firstIndex:]:
-    if "root" in l:
+    if "root" in l and "JESUP" not in l and "JESDOWN" not in l :
       buff=l.rsplit("\n",1)[0]
       inTrees.append(buff)
 else:
