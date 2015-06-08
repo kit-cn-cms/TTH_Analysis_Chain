@@ -256,11 +256,12 @@ class Categorizer:
       oldtree.GetEntry( i )
       resCat=self.GetCategory(njets[0],nbtagsM[0],BoostedTop_N_BTagsM_Clean_ak5Jets[0],BoostedHiggs_N_BTagsM_Clean_ak5Jets[0],ptjet[3],BoostedTopHiggs_TopHadCandidate_TopMVAOutput[0],BoostedTopHiggs_HiggsCandidate_HiggsTag[0],BoostedHiggs_HiggsCandidate_HiggsTag[0])
       
-      if eventID[0]%2==0: # even
+      #ttW and ttZ dont need to be splitted->Fill em in both 
+      if (eventID[0]/100)%2==0 or "ttW" in inTreeName or "ttZ" in inTreeName: # even
         for cat in outTreesEven:
           if resCat==cat[0]:
             cat[1][1].Fill()
-      if eventID[0]%2==1: # odd
+      if (eventID[0]/100)%2==1 or "ttW" in inTreeName or "ttZ" in inTreeName: # odd
         for cat in outTreesOdd:
           if resCat==cat[0]:
             cat[1][1].Fill()
@@ -294,7 +295,7 @@ class Categorizer:
 # method to split samples according additional jet flavor
   def SplitTTbarFlavor(self,inPath):
     print "splitting ", inPath, " in different flavors"
-    outTrees=[["ttbar_l"],["ttbar_bb"],["ttbar_b"],["ttbar_cc"]]
+    outTrees=[["ttbar_l"],["ttbar_bb"],["ttbar_b"],["ttbar_cc"],["ttbar_2b"]]
     
     oldfile = ROOT.TFile( inPath )
     oldtree = oldfile.Get( "MVATree" )
@@ -327,6 +328,8 @@ class Categorizer:
         outTrees[2][1][1].Fill()
       elif TTPlusCC[0]==1:
         outTrees[3][1][1].Fill()
+      elif TTPlusBB[0]==2:
+        outTrees[4][1][1].Fill()
       else:
         outTrees[0][1][1].Fill()
     
@@ -443,22 +446,22 @@ class Categorizer:
       
     oldfile = ROOT.TFile( inPath )
     oldtree = oldfile.Get( "MVATree" )
-    oldtree.SetBranchStatus("*",0)
+    #oldtree.SetBranchStatus("*",0)
     nentries =oldtree.GetEntries()
       
-    oldtree.SetBranchStatus("N_Jets",1)
-    oldtree.SetBranchStatus("N_BTagsM",1)
-    oldtree.SetBranchStatus("Jet_Pt",1)
-    oldtree.SetBranchStatus("BoostedTopHiggs_TopHadCandidate_TopMVAOutput",1)
-    oldtree.SetBranchStatus("BoostedTopHiggs_HiggsCandidate_HiggsTag",1)
-    oldtree.SetBranchStatus("BoostedHiggs_HiggsCandidate_HiggsTag",1)
-    oldtree.SetBranchStatus("BoostedHiggs_N_BTagsM_Clean_ak5Jets",1)
-    oldtree.SetBranchStatus("BoostedTop_N_BTagsM_Clean_ak5Jets",1)
-    oldtree.SetBranchStatus("Weight",1)
-    oldtree.SetBranchStatus("Evt_ID",1)
-    oldtree.SetBranchStatus("GenEvt_I_TTPlusCC",1)
-    oldtree.SetBranchStatus("GenEvt_I_TTPlusBB",1)
-    oldtree.SetBranchStatus("Evt_HT",1)
+    #oldtree.SetBranchStatus("N_Jets",1)
+    #oldtree.SetBranchStatus("N_BTagsM",1)
+    #oldtree.SetBranchStatus("Jet_Pt",1)
+    #oldtree.SetBranchStatus("BoostedTopHiggs_TopHadCandidate_TopMVAOutput",1)
+    #oldtree.SetBranchStatus("BoostedTopHiggs_HiggsCandidate_HiggsTag",1)
+    #oldtree.SetBranchStatus("BoostedHiggs_HiggsCandidate_HiggsTag",1)
+    #oldtree.SetBranchStatus("BoostedHiggs_N_BTagsM_Clean_ak5Jets",1)
+    #oldtree.SetBranchStatus("BoostedTop_N_BTagsM_Clean_ak5Jets",1)
+    #oldtree.SetBranchStatus("Weight",1)
+    #oldtree.SetBranchStatus("Evt_ID",1)
+    #oldtree.SetBranchStatus("GenEvt_I_TTPlusCC",1)
+    #oldtree.SetBranchStatus("GenEvt_I_TTPlusBB",1)
+    #oldtree.SetBranchStatus("Evt_HT",1)
 
     if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName:
       if "ttbar" in inTreeName or "TTbar" in inTreeName:
@@ -467,6 +470,7 @@ class Categorizer:
           cat.append([samplename+"_bb",0.0])
           cat.append([samplename+"_b",0.0])
           cat.append([samplename+"_cc",0.0])
+          cat.append([samplename+"_2b",0.0])
       else:
         for cat in self.categoryYields:
           cat.append([samplename,0.0])
@@ -543,6 +547,16 @@ class Categorizer:
             
         samplename=origname+"_l"
         selection=selection.replace("GenEvt_I_TTPlusCC==1","GenEvt_I_TTPlusBB==0 && GenEvt_I_TTPlusCC==0")
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT"),oldtree.GetMaximum("Evt_HT"))
+        oldtree.Draw("Evt_HT>>bufferHisto",selection)
+        integral=bufferHisto.Integral()
+        for s in c[1:]:
+          if samplename==s[0]:
+            s[1]=integral
+            #print samplename, integral
+        
+        samplename=origname+"_2b"
+        selection=selection.replace("GenEvt_I_TTPlusBB==0 && GenEvt_I_TTPlusCC==0","GenEvt_I_TTPlusBB==2")
         bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT"),oldtree.GetMaximum("Evt_HT"))
         oldtree.Draw("Evt_HT>>bufferHisto",selection)
         integral=bufferHisto.Integral()
