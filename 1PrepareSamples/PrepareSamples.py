@@ -83,10 +83,15 @@ loglines.append("\n")
 ##first split the ttbar sample in different flavors
 print "\n identifying the ttbar trees"
 ttbarSampleTrees=[]
+nonttbarSampleTrees=[]
 for i, tree in enumerate(inTrees):
   if "ttbar" in tree:
-    ttbarSampleTrees.append(inTrees.pop(i))
-print ttbarSampleTrees
+    ttbarSampleTrees.append(tree)
+  else:
+    nonttbarSampleTrees.append(tree)
+#print ttbarSampleTrees
+inTrees=nonttbarSampleTrees
+
 
 for ttbarSample in ttbarSampleTrees:
   flavSamples=Categorizer.SplitTTbarFlavor(ttbarSample)

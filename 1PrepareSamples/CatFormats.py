@@ -11,7 +11,7 @@ sampleNames=[ ["tth","$\\rm t\\bar{t}H$"],["ttH","$\\rm t\\bar{t}H$"],["TTH","$\
 
 sampleOrder=["tth","ttH","TTH","ttHbb","tthbb","ttbar","ttbar_l","ttbar_b","ttbar_bb","ttbar_2b","ttbar_cc","ttW","ttZ","SingleT","singlet","WJets","ZJets","Wjets","Zjets","DiBoson","Diboson","diboson","data","DATA","Data"]
 
-catOrder=["62","43","53","63","44","54","64","DB"]
+catOrder=["43","44","53","54","62","63","64","DB"]
 
 sampleColors=[ ["tth",ROOT.kBlue], ["ttbar",ROOT.kRed], ["ttbar_l",ROOT.kRed-7] , ["ttbar_bb",ROOT.kRed+3], ["ttbar_b",ROOT.kRed-2], ["ttbar_2b",ROOT.kRed-5], ["ttbar_cc",ROOT.kRed-3], ["ttW",ROOT.kGray], ["ttZ",ROOT.kGray+2], ["SingleT",ROOT.kPink], ["WJets",ROOT.kBlue-7], ["ZJets",ROOT.kBlue-9], ["DiBoson",ROOT.kBlue-4],["data",ROOT.kBlack]]
 

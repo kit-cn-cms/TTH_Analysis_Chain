@@ -517,7 +517,7 @@ class Categorizer:
         samplename=origname+"_bb"
         selection=selection.rsplit(")",1)[0]
         selection+=" && GenEvt_I_TTPlusBB==3)"
-        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT"),oldtree.GetMaximum("Evt_HT"))
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
         oldtree.Draw("Evt_HT>>bufferHisto",selection)
         integral=bufferHisto.Integral()
         for s in c[1:]:
@@ -527,7 +527,7 @@ class Categorizer:
         
         samplename=origname+"_b"
         selection=selection.replace("GenEvt_I_TTPlusBB==3","GenEvt_I_TTPlusBB==1")
-        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT"),oldtree.GetMaximum("Evt_HT"))
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
         oldtree.Draw("Evt_HT>>bufferHisto",selection)
         integral=bufferHisto.Integral()
         for s in c[1:]:
@@ -537,7 +537,7 @@ class Categorizer:
         
         samplename=origname+"_cc"
         selection=selection.replace("GenEvt_I_TTPlusBB==1","GenEvt_I_TTPlusCC==1")
-        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT"),oldtree.GetMaximum("Evt_HT"))
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
         oldtree.Draw("Evt_HT>>bufferHisto",selection)
         integral=bufferHisto.Integral()
         for s in c[1:]:
@@ -547,7 +547,7 @@ class Categorizer:
             
         samplename=origname+"_l"
         selection=selection.replace("GenEvt_I_TTPlusCC==1","GenEvt_I_TTPlusBB==0 && GenEvt_I_TTPlusCC==0")
-        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT"),oldtree.GetMaximum("Evt_HT"))
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
         oldtree.Draw("Evt_HT>>bufferHisto",selection)
         integral=bufferHisto.Integral()
         for s in c[1:]:
@@ -557,7 +557,7 @@ class Categorizer:
         
         samplename=origname+"_2b"
         selection=selection.replace("GenEvt_I_TTPlusBB==0 && GenEvt_I_TTPlusCC==0","GenEvt_I_TTPlusBB==2")
-        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT"),oldtree.GetMaximum("Evt_HT"))
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
         oldtree.Draw("Evt_HT>>bufferHisto",selection)
         integral=bufferHisto.Integral()
         for s in c[1:]:
@@ -566,7 +566,7 @@ class Categorizer:
             #print samplename, integral
         
       else:
-        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT"),oldtree.GetMaximum("Evt_HT"))
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
         oldtree.Draw("Evt_HT>>bufferHisto",selection)
         integral=bufferHisto.Integral()
         for s in c[1:]:
