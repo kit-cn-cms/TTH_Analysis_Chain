@@ -103,28 +103,29 @@ print "done with flavor splitting\n"
 print "splitting in categories"
 #loop over input samples an split them into the categories
 for tree in inTrees:
-  Categorizer.SplitInCategoriesEvenOdd(tree)
+  Categorizer.SplitInCategoriesRandom(tree)
 
 
 #make MCData.root
 print "creating MCData.root files"
 Categorizer.CreateMCData()
+Categorizer.ReAddTheTTbarTrees()
 
 #create tables with yields
 print "Trees are done"
 print "\n ---------------------------------------------------"
-print "Creating yield tables"
-Categorizer.MakeYieldTables()
+#print "Creating yield tables"
+#Categorizer.MakeYieldTables()
 #create plots
-print "making Yields plot"
-Categorizer.MakeYieldPlots()
-#wirte log
-print "Writig AnalysisLog"
-Categorizer.AppendStuffToLogLines(loglines)
-outLog=open(outPath+"/AnalysisConfigs/"+logfile.rsplit("/",1)[1],"w")
-for l in loglines:
-  outLog.write(l)
-outLog.close()
+#print "making Yields plot"
+#Categorizer.MakeYieldPlots()
+##wirte log
+#print "Writig AnalysisLog"
+#Categorizer.AppendStuffToLogLines(loglines)
+#outLog=open(outPath+"/AnalysisConfigs/"+logfile.rsplit("/",1)[1],"w")
+#for l in loglines:
+  #outLog.write(l)
+#outLog.close()
 
 #pack and copy software
-call(["tar","-a","-cf",outPath+"/AnalysisConfigs/AnalysisSoftware.tar.gz",cwd.rsplit("/",1)[0]])
+#call(["tar","-a","-cf",outPath+"/AnalysisConfigs/AnalysisSoftware.tar.gz",cwd.rsplit("/",1)[0]])

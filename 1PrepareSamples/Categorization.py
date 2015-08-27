@@ -230,7 +230,7 @@ class Categorizer:
     BoostedTop_N_BTagsM_Clean_ak5Jets=array('i',[0])
     weight=array('f',[0])
     ptjet=array('f',[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
-    eventID=array("i",[0])
+    eventODD=array("i",[0])
     
     oldtree.SetBranchAddress( "N_Jets", njets )
     oldtree.SetBranchAddress( "N_BTagsM", nbtagsM )
@@ -241,7 +241,7 @@ class Categorizer:
     oldtree.SetBranchAddress( "BoostedHiggs_N_BTagsM_Clean_ak5Jets",BoostedHiggs_N_BTagsM_Clean_ak5Jets)
     oldtree.SetBranchAddress( "BoostedTop_N_BTagsM_Clean_ak5Jets",BoostedTop_N_BTagsM_Clean_ak5Jets)
     oldtree.SetBranchAddress( "Weight",weight)
-    oldtree.SetBranchAddress("Evt_ID",eventID)
+    oldtree.SetBranchAddress("Evt_Odd",eventODD)
     
     if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName:
       for cat in self.categoryYields:
@@ -257,11 +257,11 @@ class Categorizer:
       resCat=self.GetCategory(njets[0],nbtagsM[0],BoostedTop_N_BTagsM_Clean_ak5Jets[0],BoostedHiggs_N_BTagsM_Clean_ak5Jets[0],ptjet[3],BoostedTopHiggs_TopHadCandidate_TopMVAOutput[0],BoostedTopHiggs_HiggsCandidate_HiggsTag[0],BoostedHiggs_HiggsCandidate_HiggsTag[0])
       
       #ttW and ttZ dont need to be splitted->Fill em in both 
-      if (eventID[0]/100)%2==0 or "ttW" in inTreeName or "ttZ" in inTreeName: # even
+      if eventODD[0]==0 or "ttW" in inTreeName or "ttZ" in inTreeName: # even
         for cat in outTreesEven:
           if resCat==cat[0]:
             cat[1][1].Fill()
-      if (eventID[0]/100)%2==1 or "ttW" in inTreeName or "ttZ" in inTreeName: # odd
+      if eventODD[0]==1 or "ttW" in inTreeName or "ttZ" in inTreeName: # odd
         for cat in outTreesOdd:
           if resCat==cat[0]:
             cat[1][1].Fill()
@@ -284,8 +284,12 @@ class Categorizer:
     
     print "hadding the even/odd trees together"
     for name in outNames:
-      call(["rm","-f",name.replace("/Even","")])
-      call(["hadd",name.replace("/Even",""),name.replace("/Even","/Odd"),name])
+      if "ttW" in name or "ttZ" in name:
+        call(["rm","-f",name.replace("/Even","")])
+        call(["cp",name,name.replace("/Even","")])
+      else:
+        call(["rm","-f",name.replace("/Even","")])
+        call(["hadd",name.replace("/Even",""),name.replace("/Even","/Odd"),name])
     print "hadding done"
       
     #print self.categoryYields
@@ -351,7 +355,7 @@ class Categorizer:
       
     oldfile = ROOT.TFile( inPath )
     oldtree = oldfile.Get( "MVATree" )
-#    oldtree.SetBranchStatus("*",0)
+    oldtree.SetBranchStatus("*",0)
     nentries =oldtree.GetEntries()
       
     njets=array('i',[0])
@@ -363,23 +367,23 @@ class Categorizer:
     BoostedTop_N_BTagsM_Clean_ak5Jets=array('i',[0])
     weight=array('f',[0])
     ptjet=array('f',[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
-    eventID=array("i",[0])
+    eventODD=array("i",[0])
     TTPlusCC=array('i',[0])
     TTPlusBB=array('i',[0])
     
-#    oldtree.SetBranchStatus("N_Jets",1)
-#    oldtree.SetBranchStatus("N_BTagsM",1)
-#    oldtree.SetBranchStatus("Jet_Pt",1)
-#    oldtree.SetBranchStatus("BoostedTopHiggs_TopHadCandidate_TopMVAOutput",1)
-#    oldtree.SetBranchStatus("BoostedTopHiggs_HiggsCandidate_HiggsTag",1)
-#    oldtree.SetBranchStatus("BoostedHiggs_HiggsCandidate_HiggsTag",1)
-#    oldtree.SetBranchStatus("BoostedHiggs_N_BTagsM_Clean_ak5Jets",1)
-#    oldtree.SetBranchStatus("BoostedTop_N_BTagsM_Clean_ak5Jets",1)
-#    oldtree.SetBranchStatus("Weight",1)
-#    oldtree.SetBranchStatus("Evt_ID",1)
-#    oldtree.SetBranchStatus("GenEvt_I_TTPlusCC",1)
-#    oldtree.SetBranchStatus("GenEvt_I_TTPlusBB",1)
-    
+    oldtree.SetBranchStatus("N_Jets",1)
+    oldtree.SetBranchStatus("N_BTagsM",1)
+    oldtree.SetBranchStatus("Jet_Pt",1)
+    oldtree.SetBranchStatus("BoostedTopHiggs_TopHadCandidate_TopMVAOutput",1)
+    oldtree.SetBranchStatus("BoostedTopHiggs_HiggsCandidate_HiggsTag",1)
+    oldtree.SetBranchStatus("BoostedHiggs_HiggsCandidate_HiggsTag",1)
+    oldtree.SetBranchStatus("BoostedHiggs_N_BTagsM_Clean_ak5Jets",1)
+    oldtree.SetBranchStatus("BoostedTop_N_BTagsM_Clean_ak5Jets",1)
+    oldtree.SetBranchStatus("Weight",1)
+    oldtree.SetBranchStatus("Evt_ID",1)
+    oldtree.SetBranchStatus("GenEvt_I_TTPlusCC",1)
+    oldtree.SetBranchStatus("GenEvt_I_TTPlusBB",1)
+
     oldtree.SetBranchAddress( "N_Jets", njets )
     oldtree.SetBranchAddress( "N_BTagsM", nbtagsM )
     oldtree.SetBranchAddress( "Jet_Pt",ptjet)
@@ -389,7 +393,7 @@ class Categorizer:
     oldtree.SetBranchAddress( "BoostedHiggs_N_BTagsM_Clean_ak5Jets",BoostedHiggs_N_BTagsM_Clean_ak5Jets)
     oldtree.SetBranchAddress( "BoostedTop_N_BTagsM_Clean_ak5Jets",BoostedTop_N_BTagsM_Clean_ak5Jets)
     oldtree.SetBranchAddress( "Weight",weight)
-    oldtree.SetBranchAddress("Evt_ID",eventID)
+    oldtree.SetBranchAddress("Evt_Odd",eventODD)
     oldtree.SetBranchAddress( "GenEvt_I_TTPlusCC", TTPlusCC )
     oldtree.SetBranchAddress( "GenEvt_I_TTPlusBB", TTPlusBB )
     
@@ -446,23 +450,22 @@ class Categorizer:
       
     oldfile = ROOT.TFile( inPath )
     oldtree = oldfile.Get( "MVATree" )
-
-#    oldtree.SetBranchStatus("*",0)
+    #oldtree.SetBranchStatus("*",0)
     nentries =oldtree.GetEntries()
       
-#    oldtree.SetBranchStatus("N_Jets",1)
-#    oldtree.SetBranchStatus("N_BTagsM",1)
-#    oldtree.SetBranchStatus("Jet_Pt",1)
-#    oldtree.SetBranchStatus("BoostedTopHiggs_TopHadCandidate_TopMVAOutput",1)
-#    oldtree.SetBranchStatus("BoostedTopHiggs_HiggsCandidate_HiggsTag",1)
-#    oldtree.SetBranchStatus("BoostedHiggs_HiggsCandidate_HiggsTag",1)
-#    oldtree.SetBranchStatus("BoostedHiggs_N_BTagsM_Clean_ak5Jets",1)
-#    oldtree.SetBranchStatus("BoostedTop_N_BTagsM_Clean_ak5Jets",1)
-#    oldtree.SetBranchStatus("Weight",1)
-#    oldtree.SetBranchStatus("Evt_ID",1)
-#    oldtree.SetBranchStatus("GenEvt_I_TTPlusCC",1)
-#    oldtree.SetBranchStatus("GenEvt_I_TTPlusBB",1)
-#    oldtree.SetBranchStatus("Evt_HT",1)
+    #oldtree.SetBranchStatus("N_Jets",1)
+    #oldtree.SetBranchStatus("N_BTagsM",1)
+    #oldtree.SetBranchStatus("Jet_Pt",1)
+    #oldtree.SetBranchStatus("BoostedTopHiggs_TopHadCandidate_TopMVAOutput",1)
+    #oldtree.SetBranchStatus("BoostedTopHiggs_HiggsCandidate_HiggsTag",1)
+    #oldtree.SetBranchStatus("BoostedHiggs_HiggsCandidate_HiggsTag",1)
+    #oldtree.SetBranchStatus("BoostedHiggs_N_BTagsM_Clean_ak5Jets",1)
+    #oldtree.SetBranchStatus("BoostedTop_N_BTagsM_Clean_ak5Jets",1)
+    #oldtree.SetBranchStatus("Weight",1)
+    #oldtree.SetBranchStatus("Evt_ID",1)
+    #oldtree.SetBranchStatus("GenEvt_I_TTPlusCC",1)
+    #oldtree.SetBranchStatus("GenEvt_I_TTPlusBB",1)
+    #oldtree.SetBranchStatus("Evt_HT",1)
 
     if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName:
       if "ttbar" in inTreeName or "TTbar" in inTreeName:
@@ -612,6 +615,40 @@ class Categorizer:
         call(["rm","-f",outname])
         call(["hadd",outname]+names)
     print "\n hadded Trees for MCData files\n"
+    
+  def ReAddTheTTbarTrees(self):
+    print "cat Trees ", self.categoryTrees
+    print "Even Trees ", self.categoryTreesEven
+    print "Odd Trees ", self.categoryTreesOdd
+    if len(self.categoryTrees[0])>1:
+      for cat in self.categoryTrees:
+        names=[]
+        for tree in cat[1:]:
+          if "JESUP" not in tree and "JESDOWN" not in tree and "ttbar" in tree:
+            names.append(tree)
+        outname=names[0].rsplit("/",1)[0]+"/ttbar_nominal.root"
+        call(["rm","-f",outname])
+        call(["hadd",outname]+names)
+    if len(self.categoryTreesEven[0])>1:
+      for cat in self.categoryTreesEven:
+        names=[]
+        for tree in cat[1:]:
+          if "JESUP" not in tree and "JESDOWN" not in tree and "ttbar" in tree:
+            names.append(tree)
+        outname=names[0].rsplit("/",1)[0]+"/ttbar_nominal.root"
+        call(["rm","-f",outname])
+        call(["hadd",outname]+names)
+    if len(self.categoryTreesOdd[0])>1:
+      for cat in self.categoryTreesOdd:
+        names=[]
+        for tree in cat[1:]:
+          if "JESUP" not in tree and "JESDOWN" not in tree and "ttbar" in tree:
+            names.append(tree)
+        outname=names[0].rsplit("/",1)[0]+"/ttbar_nominal.root"
+        call(["rm","-f",outname])
+        call(["hadd",outname]+names)
+    print "\n hadded ttbar Trees back to ttbar_nominal.root files\n"
+    
      
 #method to make yield tables for the categories
   def MakeYieldTables(self):
@@ -824,5 +861,111 @@ class Categorizer:
     #print type(self.categoryYields[0][1][1])
     #print self.categoryYields
       
+#method to split at random
+  def SplitInCategoriesRandom(self,inPath):
+    rand=ROOT.TRandom3(0);
     
+    outTreesEven=[]
+    outTreesOdd=[]
+    outNames=[]
+    inTreeName=inPath.rsplit("/",1)[1]
+    #print samplename
+    print "splitting ", inPath
+    samplename=inTreeName.rsplit("_",1)[0]
+    #print samplename
+      
+    oldfile = ROOT.TFile( inPath )
+    oldtree = oldfile.Get( "MVATree" )
+    nentries =oldtree.GetEntries()
+      
+    for catPath in self.categoryPathsEven:
+      outNames.append(catPath[1]+"/"+inTreeName)
+      tf=ROOT.TFile(catPath[1]+"/"+inTreeName,"recreate")
+      tree=oldtree.CloneTree(0)
+      outTreesEven.append([catPath[0],[tf,tree]])
+      for cat in self.categoryTreesEven:
+        if cat[0]==catPath[0]:
+          cat.append(catPath[1]+"/"+inTreeName)
+    for catPath in self.categoryPathsOdd:
+      tf=ROOT.TFile(catPath[1]+"/"+inTreeName,"recreate")
+      tree=oldtree.CloneTree(0)
+      outTreesOdd.append([catPath[0],[tf,tree]])
+      for cat in self.categoryTreesOdd:
+        if cat[0]==catPath[0]:
+          cat.append(catPath[1]+"/"+inTreeName)
+    #print outTrees
+    #print self.categoryPaths
+
+    njets=array('i',[0])
+    nbtagsM=array('i',[0])
+    BoostedTopHiggs_TopHadCandidate_TopMVAOutput=array('f',[0])
+    BoostedTopHiggs_HiggsCandidate_HiggsTag=array('f',[0])
+    BoostedHiggs_HiggsCandidate_HiggsTag=array('f',[0])
+    BoostedHiggs_N_BTagsM_Clean_ak5Jets=array('i',[0])
+    BoostedTop_N_BTagsM_Clean_ak5Jets=array('i',[0])
+    weight=array('f',[0])
+    ptjet=array('f',[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+    eventODD=array("i",[0])
     
+    oldtree.SetBranchAddress( "N_Jets", njets )
+    oldtree.SetBranchAddress( "N_BTagsM", nbtagsM )
+    oldtree.SetBranchAddress( "Jet_Pt",ptjet)
+    oldtree.SetBranchAddress( "BoostedTopHiggs_TopHadCandidate_TopMVAOutput",BoostedTopHiggs_TopHadCandidate_TopMVAOutput)
+    oldtree.SetBranchAddress( "BoostedTopHiggs_HiggsCandidate_HiggsTag",BoostedTopHiggs_HiggsCandidate_HiggsTag)
+    oldtree.SetBranchAddress( "BoostedHiggs_HiggsCandidate_HiggsTag",BoostedHiggs_HiggsCandidate_HiggsTag)
+    oldtree.SetBranchAddress( "BoostedHiggs_N_BTagsM_Clean_ak5Jets",BoostedHiggs_N_BTagsM_Clean_ak5Jets)
+    oldtree.SetBranchAddress( "BoostedTop_N_BTagsM_Clean_ak5Jets",BoostedTop_N_BTagsM_Clean_ak5Jets)
+    oldtree.SetBranchAddress( "Weight",weight)
+    oldtree.SetBranchAddress("Evt_ID",eventODD)
+    
+    if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName:
+      for cat in self.categoryYields:
+        cat.append([samplename,0.0])
+    #print self.categoryYields
+    
+    if self.debugFlag==True:
+      nentries=self.debugMaxEntries    
+    for i in range(nentries):
+      if i>0 and i%100000==0:
+            print "at entry "+str(i)
+      oldtree.GetEntry( i )
+      resCat=self.GetCategory(njets[0],nbtagsM[0],BoostedTop_N_BTagsM_Clean_ak5Jets[0],BoostedHiggs_N_BTagsM_Clean_ak5Jets[0],ptjet[3],BoostedTopHiggs_TopHadCandidate_TopMVAOutput[0],BoostedTopHiggs_HiggsCandidate_HiggsTag[0],BoostedHiggs_HiggsCandidate_HiggsTag[0])
+      
+      randomsplit=rand.Rndm()
+      #ttW and ttZ dont need to be splitted->Fill em in both 
+      if randomsplit>0.5 or "ttW" in inTreeName or "ttZ" in inTreeName: # even
+        for cat in outTreesEven:
+          if resCat==cat[0]:
+            cat[1][1].Fill()
+      if randomsplit<=0.5 or "ttW" in inTreeName or "ttZ" in inTreeName: # odd
+        for cat in outTreesOdd:
+          if resCat==cat[0]:
+            cat[1][1].Fill()
+                            
+      if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName:
+        for cat in self.categoryYields:
+          if resCat==cat[0]:
+            for s in cat[1:]:
+              if samplename==s[0]:
+                s[1]+=weight[0]
+    
+    for cat in outTreesEven:
+      cat[1][1].AutoSave()
+      cat[1][0].Close()
+    for cat in outTreesOdd:
+      cat[1][1].AutoSave()
+      cat[1][0].Close()
+    oldfile.Close()
+    print "done splitting", inPath
+    
+    print "hadding the even/odd trees together"
+    for name in outNames:
+      if "ttW" in name or "ttZ" in name:
+        call(["rm","-f",name.replace("/Even","")])
+        call(["cp",name,name.replace("/Even","")])
+      else:
+        call(["rm","-f",name.replace("/Even","")])
+        call(["hadd",name.replace("/Even",""),name.replace("/Even","/Odd"),name])
+    print "hadding done"
+      
+    #print self.categoryYields
