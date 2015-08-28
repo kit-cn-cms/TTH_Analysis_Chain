@@ -35,6 +35,11 @@ I already prepared 3 categorizations:
 "GreedyDBoostedCategories.txt" = puts overlapping events in the double boosted category  
 "GenerousDBoostedCategories.txt" = puts overlapping events in the L+J categories  
 
+The script will also generate event yield tables and a plot.  
+
+If you only want the tables and plot without preparing the samples you can use   
+"MakeYieldTablesAndPlots.py"  
+
 #### 2) 
 At this point you can find a BDT configuration  
 - Play around with TMVA  
