@@ -1,0 +1,33 @@
+categories 43 44 53 54 62 63 64 DB
+
+DB Greed_43 == 1
+DB Greed_44 == 1
+DB Greed_53 == 1
+DB Greed_54 == 1
+DB Greed_62 == 1
+DB Greed_63 == 1
+DB Greed_64 == 1
+
+DB BoostedTopHiggs_TopHadCandidate_TopMVAOutput > -1.1
+DB BoostedTopHiggs_HiggsCandidate_HiggsTag >= 0.814
+
+43 N_Jets == 4
+43 N_BTagsM == 3
+
+44 N_Jets == 4
+44 N_BTagsM >= 4
+
+53 N_Jets == 5
+53 N_BTagsM == 3
+
+54 N_Jets == 5
+54 N_BTagsM >= 4
+
+62 N_Jets >= 6
+62 N_BTagsM == 2
+
+63 N_Jets >= 6
+63 N_BTagsM == 3
+
+64 N_Jets >= 6
+64 N_BTagsM >= 4

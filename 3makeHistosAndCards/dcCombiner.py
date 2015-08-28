@@ -1,3 +1,5 @@
+
+#datacards to be combined
 infiles=[#"datacard_HCSVSingleGenerousV2.txt",
          "output/datacard_43_KITOPT.txt",
          "output/datacard_44_KITOPT.txt",
@@ -8,14 +10,15 @@ infiles=[#"datacard_HCSVSingleGenerousV2.txt",
          "output/datacard_64_KITOPT.txt",
 ]
           
-#outfile=open("Combined/autoFit/datacard_Combined_DBSBTSBH.txt","w")
+# path to resulting datacard
 outfile=open("output/datacard_Combined_KITOPT_All.txt","w")
-#outfile=open("NoNonTTbarBKG/output/datacard_Combined_tt00Split_NoNonTTbarBKG.txt","w")
 
-
+# you have to specify the number of samples and systematics here
 nSys=17
 nSamples=6
-#nSamples=5
+
+#-------------------------------------------------------
+# acutally do the stuff
 
 filehandles=[]
 lineheader=[]
