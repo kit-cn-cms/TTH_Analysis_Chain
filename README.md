@@ -1,8 +1,8 @@
 # TTH_Analysis_Chain
-This is the long analysis chain created for developement and is very WIP
+This is the long analysis chain created for developement and is very WIP.  
 It goes from n-tuple Trees -> BDT optimization -> BDT Training -> Limits
 
-If your trees already contain the BDT output you can follow the Ohio way here: https://twiki.cern.ch/twiki/bin/viewauth/CMS/BoostedAnalyzer#Calculate_limits_for_baseline_an
+If your trees already contain the BDT output you can follow the Ohio way here:   https://twiki.cern.ch/twiki/bin/viewauth/CMS/BoostedAnalyzer#Calculate_limits_for_baseline_an
 
 Instructions:
 
@@ -24,7 +24,7 @@ This sets up the structure needed in the Training and Limit steps.
 
 Run  
 "python -b PrepareSamples.py DIRECTORY_WITH_SLIM_TREES DIRECTORY_FOR_PREPARED_TREES CATEGORY_DEFINITION"  
-DIRECTORY_WITH_SLIM_TREES = directory containing the input trees. You should follow the above mentioned naming   convention, see e.g. /1PrepareSamples/CatFormats.py  
+DIRECTORY_WITH_SLIM_TREES = directory containing the input trees. You should follow the above mentioned naming convention, see e.g. /1PrepareSamples/CatFormats.py  
 DIRECTORY_FOR_PREPARED_TREES = empty directory for output  
 CATEGORY_DEFINITION = a file defining the categories.   
   
