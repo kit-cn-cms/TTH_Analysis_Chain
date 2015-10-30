@@ -5,6 +5,9 @@ import TableHelper
 import CatFormats
 import json
 
+from math import log10, floor
+def round_to_1(x):
+  return round(x, -int(floor(log10(x))))
 
 class Categorizer:
   def __init__(self, CatDefinition,outPath,debug=False):
@@ -13,6 +16,7 @@ class Categorizer:
     self.categoryPathsEven=[]
     self.categoryPathsOdd=[]
     self.categoryYields=[]
+    self.categoryErrors=[]
     self.outPath=outPath
     self.categoryTrees=[]
     self.categoryTreesEven=[]
@@ -156,7 +160,7 @@ class Categorizer:
     oldtree.SetBranchAddress( "BoostedTop_N_BTagsM_Clean_ak5Jets",BoostedTop_N_BTagsM_Clean_ak5Jets)
     oldtree.SetBranchAddress( "Weight",weight)
     
-    if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName:
+    if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName and "JERDOWN" not in inTreeName and "JERUP" not in inTreeName:
       for cat in self.categoryYields:
         cat.append([samplename,0.0])
     #print self.categoryYields
@@ -173,7 +177,7 @@ class Categorizer:
         if resCat==cat[0]:
           cat[1][1].Fill()
                 
-      if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName:
+      if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName and "JERDOWN" not in inTreeName and "JERUP" not in inTreeName:
         for cat in self.categoryYields:
           if resCat==cat[0]:
             for s in cat[1:]:
@@ -193,6 +197,13 @@ class Categorizer:
     outTreesEven=[]
     outTreesOdd=[]
     outNames=[]
+
+    CSV2=array('f',[0])
+    CSV3=array('f',[0])
+    Istth=array('i',[0])
+    Isttbar=array('i',[0])
+    dRBTHCLep=array('f',[0])
+
     inTreeName=inPath.rsplit("/",1)[1]
     #print samplename
     print "splitting ", inPath
@@ -207,6 +218,12 @@ class Categorizer:
       outNames.append(catPath[1]+"/"+inTreeName)
       tf=ROOT.TFile(catPath[1]+"/"+inTreeName,"recreate")
       tree=oldtree.CloneTree(0)
+      tree.Branch("CSV2",CSV2,"CSV2/F")
+      tree.Branch("CSV3",CSV3,"CSV3/F")
+      tree.Branch("dRBTHCLep",dRBTHCLep,"dRBTHCLep/F")
+      tree.Branch("Istth",Istth,"Istth/I")
+      tree.Branch("Isttbar",Isttbar,"Isttbar/I")
+
       outTreesEven.append([catPath[0],[tf,tree]])
       for cat in self.categoryTreesEven:
         if cat[0]==catPath[0]:
@@ -214,6 +231,11 @@ class Categorizer:
     for catPath in self.categoryPathsOdd:
       tf=ROOT.TFile(catPath[1]+"/"+inTreeName,"recreate")
       tree=oldtree.CloneTree(0)
+      tree.Branch("CSV2",CSV2,"CSV2/F")
+      tree.Branch("CSV3",CSV3,"CSV3/F")
+      tree.Branch("dRBTHCLep",dRBTHCLep,"dRBTHCLep/F")
+      tree.Branch("Istth",Istth,"Istth/I")
+      tree.Branch("Isttbar",Isttbar,"Isttbar/I")
       outTreesOdd.append([catPath[0],[tf,tree]])
       for cat in self.categoryTreesOdd:
         if cat[0]==catPath[0]:
@@ -230,8 +252,13 @@ class Categorizer:
     BoostedTop_N_BTagsM_Clean_ak5Jets=array('i',[0])
     weight=array('f',[0])
     ptjet=array('f',[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+    csvjet=array('f',[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
     eventODD=array("i",[0])
-    
+    BoostedTopHiggs_TopHadCandidate_B_Eta=array('f',[0])
+    BoostedTopHiggs_TopHadCandidate_B_Phi=array('f',[0])
+    Evt_Eta_PrimaryLepton=array('f',[0])
+    Evt_Phi_PrimaryLepton=array('f',[0])
+
     oldtree.SetBranchAddress( "N_Jets", njets )
     oldtree.SetBranchAddress( "N_BTagsM", nbtagsM )
     oldtree.SetBranchAddress( "Jet_Pt",ptjet)
@@ -240,10 +267,15 @@ class Categorizer:
     oldtree.SetBranchAddress( "BoostedHiggs_HiggsCandidate_HiggsTag",BoostedHiggs_HiggsCandidate_HiggsTag)
     oldtree.SetBranchAddress( "BoostedHiggs_N_BTagsM_Clean_ak5Jets",BoostedHiggs_N_BTagsM_Clean_ak5Jets)
     oldtree.SetBranchAddress( "BoostedTop_N_BTagsM_Clean_ak5Jets",BoostedTop_N_BTagsM_Clean_ak5Jets)
+    oldtree.SetBranchAddress( "CSV",csvjet)
     oldtree.SetBranchAddress( "Weight",weight)
     oldtree.SetBranchAddress("Evt_Odd",eventODD)
-    
-    if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName:
+    oldtree.SetBranchAddress( "BoostedTopHiggs_TopHadCandidate_B_Eta",BoostedTopHiggs_TopHadCandidate_B_Eta)    
+    oldtree.SetBranchAddress( "BoostedTopHiggs_TopHadCandidate_B_Phi",BoostedTopHiggs_TopHadCandidate_B_Phi)
+    oldtree.SetBranchAddress( "Evt_Eta_PrimaryLepton",Evt_Eta_PrimaryLepton)        
+    oldtree.SetBranchAddress( "Evt_Phi_PrimaryLepton",Evt_Phi_PrimaryLepton)        
+
+    if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName and "JERDOWN" not in inTreeName and "JERUP" not in inTreeName:
       for cat in self.categoryYields:
         cat.append([samplename,0.0])
     #print self.categoryYields
@@ -255,18 +287,31 @@ class Categorizer:
             print "at entry "+str(i)
       oldtree.GetEntry( i )
       resCat=self.GetCategory(njets[0],nbtagsM[0],BoostedTop_N_BTagsM_Clean_ak5Jets[0],BoostedHiggs_N_BTagsM_Clean_ak5Jets[0],ptjet[3],BoostedTopHiggs_TopHadCandidate_TopMVAOutput[0],BoostedTopHiggs_HiggsCandidate_HiggsTag[0],BoostedHiggs_HiggsCandidate_HiggsTag[0])
-      
+
+      dRBTHCLep[0]=ROOT.TMath.Sqrt((Evt_Eta_PrimaryLepton[0]-BoostedTopHiggs_TopHadCandidate_B_Eta[0])*(Evt_Eta_PrimaryLepton[0]-BoostedTopHiggs_TopHadCandidate_B_Eta[0]) + (Evt_Phi_PrimaryLepton[0]-BoostedTopHiggs_TopHadCandidate_B_Phi[0])*(Evt_Phi_PrimaryLepton[0]-BoostedTopHiggs_TopHadCandidate_B_Phi[0]))
+      CSV2[0]=csvjet[2]
+      CSV3[0]=csvjet[3]
+      if "tth" in inTreeName:
+        Istth[0]=1
+        Isttbar[0]=0
+      elif "ttbar" in inTreeName:
+        Istth[0]=0
+        Isttbar[0]=1
+      else:
+        Istth[0]=0
+        Isttbar[0]=0  
+
       #ttW and ttZ dont need to be splitted->Fill em in both 
-      if eventODD[0]==0 or "ttW" in inTreeName or "ttZ" in inTreeName: # even
+      if eventODD[0]==0 or "ttW" in inTreeName or "ttZ" in inTreeName or "SingleT" in inTreeName or "DiBoson" in inTreeName or "WJets" in inTreeName or "ZJets" in inTreeName: # even
         for cat in outTreesEven:
           if resCat==cat[0]:
             cat[1][1].Fill()
-      if eventODD[0]==1 or "ttW" in inTreeName or "ttZ" in inTreeName: # odd
+      if eventODD[0]==1 or "ttW" in inTreeName or "ttZ" in inTreeName or "SingleT" in inTreeName or "DiBoson" in inTreeName or "WJets" in inTreeName or "ZJets" in inTreeName: # odd
         for cat in outTreesOdd:
           if resCat==cat[0]:
             cat[1][1].Fill()
                             
-      if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName:
+      if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName and "JERDOWN" not in inTreeName and "JERUP" not in inTreeName:
         for cat in self.categoryYields:
           if resCat==cat[0]:
             for s in cat[1:]:
@@ -284,7 +329,7 @@ class Categorizer:
     
     print "hadding the even/odd trees together"
     for name in outNames:
-      if "ttW" in name or "ttZ" in name:
+      if "ttW" in name or "ttZ" in name or "SingleT" in name or "DiBoson" in name or "WJets" in name or "ZJets" in name:
         call(["rm","-f",name.replace("/Even","")])
         call(["cp",name,name.replace("/Even","")])
       else:
@@ -397,7 +442,7 @@ class Categorizer:
     oldtree.SetBranchAddress( "GenEvt_I_TTPlusCC", TTPlusCC )
     oldtree.SetBranchAddress( "GenEvt_I_TTPlusBB", TTPlusBB )
     
-    if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName:
+    if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName and "JERDOWN" not in inTreeName and "JERUP" not in inTreeName:
       if "ttbar" in inTreeName or "TTbar" in inTreeName:
         for cat in self.categoryYields:
           cat.append([samplename+"_l",0.0])
@@ -427,7 +472,7 @@ class Categorizer:
         else:
           samplename=samplename+"_l"
       
-      if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName:
+      if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName and "JERDOWN" not in inTreeName and "JERUP" not in inTreeName:
         for cat in self.categoryYields:
           if resCat==cat[0]:
             for s in cat[1:]:
@@ -440,7 +485,7 @@ class Categorizer:
   def OnlyGetYieldsFast(self,inPath):
     
     inTreeName=inPath.rsplit("/",1)[1]
-    if "JESUP" in inTreeName or "JESDOWN" in inTreeName:
+    if "JESUP" in inTreeName or "JESDOWN" in inTreeName and "JERDOWN" not in inTreeName and "JERUP" not in inTreeName:
       return 0
     #print samplename
     print "counting events in ", inPath
@@ -467,7 +512,7 @@ class Categorizer:
     #oldtree.SetBranchStatus("GenEvt_I_TTPlusBB",1)
     #oldtree.SetBranchStatus("Evt_HT",1)
 
-    if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName:
+    if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName and "JERDOWN" not in inTreeName and "JERUP" not in inTreeName:
       if "ttbar" in inTreeName or "TTbar" in inTreeName:
         for cat in self.categoryYields:
           cat.append([samplename+"_l",0.0])
@@ -581,6 +626,173 @@ class Categorizer:
     oldfile.Close()
     print self.categoryYields
     print "done counting\n", inPath
+
+
+
+#--------------------------------------------------
+  def OnlyGetYieldsFastWerrors(self,inPath):
+    
+    inTreeName=inPath.rsplit("/",1)[1]
+    if "JESUP" in inTreeName or "JESDOWN" in inTreeName and "JERDOWN" not in inTreeName and "JERUP" not in inTreeName:
+      return 0
+    #print samplename
+    print "counting events in ", inPath
+    samplename=inTreeName.rsplit("_",1)[0]
+    origname=samplename
+    #print samplename
+      
+    oldfile = ROOT.TFile( inPath )
+    oldtree = oldfile.Get( "MVATree" )
+    #oldtree.SetBranchStatus("*",0)
+    nentries =oldtree.GetEntries()
+      
+    #oldtree.SetBranchStatus("N_Jets",1)
+    #oldtree.SetBranchStatus("N_BTagsM",1)
+    #oldtree.SetBranchStatus("Jet_Pt",1)
+    #oldtree.SetBranchStatus("BoostedTopHiggs_TopHadCandidate_TopMVAOutput",1)
+    #oldtree.SetBranchStatus("BoostedTopHiggs_HiggsCandidate_HiggsTag",1)
+    #oldtree.SetBranchStatus("BoostedHiggs_HiggsCandidate_HiggsTag",1)
+    #oldtree.SetBranchStatus("BoostedHiggs_N_BTagsM_Clean_ak5Jets",1)
+    #oldtree.SetBranchStatus("BoostedTop_N_BTagsM_Clean_ak5Jets",1)
+    #oldtree.SetBranchStatus("Weight",1)
+    #oldtree.SetBranchStatus("Evt_ID",1)
+    #oldtree.SetBranchStatus("GenEvt_I_TTPlusCC",1)
+    #oldtree.SetBranchStatus("GenEvt_I_TTPlusBB",1)
+    #oldtree.SetBranchStatus("Evt_HT",1)
+
+    if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName and "JERDOWN" not in inTreeName and "JERUP" not in inTreeName:
+      if "ttbar" in inTreeName or "TTbar" in inTreeName:
+        for cat in self.categoryYields:
+          cat.append([samplename+"_l",0.0,0.0])
+          cat.append([samplename+"_bb",0.0,0.0])
+          cat.append([samplename+"_b",0.0,0.0])
+          cat.append([samplename+"_cc",0.0,0.0])
+          cat.append([samplename+"_2b",0.0,0.0])
+      else:
+        for cat in self.categoryYields:
+          cat.append([samplename,0.0,0.0])
+    #print self.categoryYields
+    
+    for c in self.categoryYields:
+      selection="Weight*("
+      for cat in self.categories:
+        greedyCats=[]
+        if c[0]==cat[0]:
+          selection+="("
+          for cut in cat[1:]:
+            if "Greed" in cut[0]:
+              for gc in self.categories:
+                if gc[0] in cut[0] and "=="==cut[1] and 1==cut[2]:
+                  greedyCats.append(gc[0])
+                  #print "Greedy ",gc[0]
+              continue
+            selection+=str(cut[0])+str(cut[1])+str(cut[2])
+            selection+=" && "
+          selection=selection.rsplit("&&",1)[0]
+          #print selection
+          selection+=") && "
+          #print selection
+          for gc in self.categories:
+            if gc[0] in greedyCats:
+              selection+="!("
+              for cut in gc[1:]:
+                #print cut
+                if "Greed" in cut[0]:
+                  continue
+                selection+=str(cut[0])+str(cut[1])+str(cut[2])
+                selection+=" && "
+                #print selection
+              selection=selection.rsplit("&&",1)[0]
+              #print selection
+              selection+=") && "
+      selection=selection.rsplit("&&",1)[0]
+      selection+=")"
+      #print " "
+      #print selection
+      #print ""
+      if "ttbar" in inTreeName or "TTbar" in inTreeName:
+        samplename=origname+"_bb"
+        selection=selection.rsplit(")",1)[0]
+        selection+=" && GenEvt_I_TTPlusBB==3)"
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
+        bufferHisto.Sumw2()
+        oldtree.Draw("Evt_HT>>bufferHisto",selection)
+        err=ROOT.Double(0.0)
+        integral=bufferHisto.IntegralAndError(0,1000,err)
+        for s in c[1:]:
+          if samplename==s[0]:
+            s[1]=integral
+            s[2]=err
+            #print samplename, integral
+        
+        samplename=origname+"_b"
+        selection=selection.replace("GenEvt_I_TTPlusBB==3","GenEvt_I_TTPlusBB==1")
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
+        bufferHisto.Sumw2()
+        oldtree.Draw("Evt_HT>>bufferHisto",selection)
+        err=ROOT.Double(0.0)
+        integral=bufferHisto.IntegralAndError(0,1000,err)
+        for s in c[1:]:
+          if samplename==s[0]:
+            s[1]=integral
+            s[2]=err
+            #print samplename, integral
+        
+        samplename=origname+"_cc"
+        selection=selection.replace("GenEvt_I_TTPlusBB==1","GenEvt_I_TTPlusCC==1")
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
+        bufferHisto.Sumw2()
+        oldtree.Draw("Evt_HT>>bufferHisto",selection)
+        err=ROOT.Double(0.0)
+        integral=bufferHisto.IntegralAndError(0,1000,err)
+        for s in c[1:]:
+          if samplename==s[0]:
+            s[1]=integral
+            s[2]=err
+            #print samplename, integral
+            
+        samplename=origname+"_l"
+        selection=selection.replace("GenEvt_I_TTPlusCC==1","GenEvt_I_TTPlusBB==0 && GenEvt_I_TTPlusCC==0")
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
+        bufferHisto.Sumw2()
+        oldtree.Draw("Evt_HT>>bufferHisto",selection)
+        err=ROOT.Double(0.0)
+        integral=bufferHisto.IntegralAndError(0,1000,err)
+        for s in c[1:]:
+          if samplename==s[0]:
+            s[1]=integral
+            s[2]=err
+            #print samplename, integral
+        
+        samplename=origname+"_2b"
+        selection=selection.replace("GenEvt_I_TTPlusBB==0 && GenEvt_I_TTPlusCC==0","GenEvt_I_TTPlusBB==2")
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
+        bufferHisto.Sumw2()
+        oldtree.Draw("Evt_HT>>bufferHisto",selection)
+        err=ROOT.Double(0.0)
+        integral=bufferHisto.IntegralAndError(0,1000,err)
+        for s in c[1:]:
+          if samplename==s[0]:
+            s[1]=integral
+            s[2]=err
+            #print samplename, integral
+        
+      else:
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
+        bufferHisto.Sumw2()
+        oldtree.Draw("Evt_HT>>bufferHisto",selection)
+        err=ROOT.Double(0.0)
+        integral=bufferHisto.IntegralAndError(0,1000,err)
+        for s in c[1:]:
+          if samplename==s[0]:
+            s[1]=integral
+            s[2]=err
+            #print "integral ",integral
+            
+    oldfile.Close()
+    print self.categoryYields
+    print "done counting\n", inPath
+
     
 #method to add each tree in a category to create MCData.root
   def CreateMCData(self):
@@ -591,7 +803,7 @@ class Categorizer:
       for cat in self.categoryTrees:
         names=[]
         for tree in cat[1:]:
-          if "JESUP" not in tree and "JESDOWN" not in tree:
+          if "JESUP" not in tree and "JESDOWN" not in tree and "JERDOWN" not in tree and "JERUP" not in tree and "tth" not in tree:
             names.append(tree)
         outname=names[0].rsplit("/",1)[0]+"/MCData.root"
         call(["rm","-f",outname])
@@ -600,7 +812,7 @@ class Categorizer:
       for cat in self.categoryTreesEven:
         names=[]
         for tree in cat[1:]:
-          if "JESUP" not in tree and "JESDOWN" not in tree:
+          if "JESUP" not in tree and "JESDOWN" not in tree and "JERDOWN" not in tree and "JERUP" not in tree and "tth" not in tree:
             names.append(tree)
         outname=names[0].rsplit("/",1)[0]+"/MCData.root"
         call(["rm","-f",outname])
@@ -609,7 +821,7 @@ class Categorizer:
       for cat in self.categoryTreesOdd:
         names=[]
         for tree in cat[1:]:
-          if "JESUP" not in tree and "JESDOWN" not in tree:
+          if "JESUP" not in tree and "JESDOWN" not in tree and "JERDOWN" not in tree and "JERUP" not in tree and "tth" not in tree:
             names.append(tree)
         outname=names[0].rsplit("/",1)[0]+"/MCData.root"
         call(["rm","-f",outname])
@@ -624,7 +836,7 @@ class Categorizer:
       for cat in self.categoryTrees:
         names=[]
         for tree in cat[1:]:
-          if "JESUP" not in tree and "JESDOWN" not in tree and "ttbar" in tree:
+          if "JESUP" not in tree and "JESDOWN" not in tree and "JERDOWN" not in tree and "JERUP" not in tree and "ttbar" in tree:
             names.append(tree)
         outname=names[0].rsplit("/",1)[0]+"/ttbar_nominal.root"
         call(["rm","-f",outname])
@@ -633,7 +845,7 @@ class Categorizer:
       for cat in self.categoryTreesEven:
         names=[]
         for tree in cat[1:]:
-          if "JESUP" not in tree and "JESDOWN" not in tree and "ttbar" in tree:
+          if "JESUP" not in tree and "JESDOWN" not in tree and "JERDOWN" not in tree and "JERUP" not in tree and "ttbar" in tree:
             names.append(tree)
         outname=names[0].rsplit("/",1)[0]+"/ttbar_nominal.root"
         call(["rm","-f",outname])
@@ -642,7 +854,7 @@ class Categorizer:
       for cat in self.categoryTreesOdd:
         names=[]
         for tree in cat[1:]:
-          if "JESUP" not in tree and "JESDOWN" not in tree and "ttbar" in tree:
+          if "JESUP" not in tree and "JESDOWN" not in tree and "JERDOWN" not in tree and "JERUP" not in tree and "ttbar" in tree:
             names.append(tree)
         outname=names[0].rsplit("/",1)[0]+"/ttbar_nominal.root"
         call(["rm","-f",outname])
@@ -697,23 +909,51 @@ class Categorizer:
         
       line.append(sampleName)
       #print type(sample[1]), sample[1]
-      yld="%0.1f" % sample[1]
+      if len(sample)==3:
+        if abs(sample[2])>0:
+          roundto=max(1,-int(floor(log10(abs(sample[2])))))
+        else:
+          roundto=1
+        print roundto
+        yld="$"+str(round(sample[1],roundto))+" \pm "+str(round(sample[2],roundto))+"$"
+      else:
+        yld="$%0.1f$" %sample[1]
+      print "bla", yld
       line.append(yld)
       #print self.categoryYields[1:]
       for cat in self.categoryYields[1:]:
         #print type(cat[i+1][1]),cat[i+1]
-        yld="%0.1f" % cat[i+1][1]
+        if len(cat[i+1])==3:
+          if abs(cat[i+1][2])>0:
+            roundto=max(1,-int(floor(log10(abs(cat[i+1][2])))))
+          else:
+            roundto=1
+          print roundto
+          yld="$"+str(round(cat[i+1][1],roundto))+" \pm "+str(round(cat[i+1][2],roundto))+"$"        
+          #yld="$%0.1f \pm %0.1f$" %(cat[i+1][1], cat[i+1][2])
+        else:
+          yld="$%0.1f$" % cat[i+1][1]
+        print yld
         line.append(yld)
+      print line
       TableHelper.write_syst(out,line)
     
     #get bkgSums
     for cat in self.categoryYields:
       bkg=0.0
+      bkgerrs=0.0
       for sample in cat[1:]:
-        if sample[0]=="data" or sample[0]=="Data" or sample[0]=="tth" or sample[0]=="ttH" or sample[0]=="ttHbb" or sample[0]=="tthbb" :
+        if sample[0]=="data" or sample[0]=="Data" or sample[0]=="tth" or sample[0]=="ttH" or sample[0]=="ttHbb" or sample[0]=="tthbb" or sample[0]=="tthNonbb" or sample[0]=="ttHNonbb":
           continue
+        if len(sample)==3:
+          bkgerrs+=sample[2]
         bkg+=sample[1]
-      byld="%0.1f" % bkg
+      if abs(bkgerrs)>0:
+        roundto=max(1,-int(floor(log10(abs(bkgerrs)))))
+      else:
+        roundto=1
+      byld="$"+str(round(bkg,roundto))+" \pm "+str(round(bkgerrs,roundto))+"$"  
+#      byld="$%0.1f \pm %0.1f$" %(bkg, bkgerrs)
       bkgSums.append(byld)
     out.write("\\hline\n")
     TableHelper.write_syst(out,bkgSums)
@@ -737,17 +977,22 @@ class Categorizer:
 
 # method to create category yield plots
   def MakeYieldPlots(self):
+    ROOT.gStyle.SetOptTitle(0)
     call(["mkdir",self.outPath+"/Yields"])
     ttHScale=30.0
     #print self.categoryYields
     nCats=len(self.categoryYields)
     hstack=ROOT.THStack("hstack","Yields")
     histos=[]
-    canvas=ROOT.TCanvas("canvas","Yields",800,600)
-    legend=ROOT.TLegend(0.3,0.78,0.94,0.89)
+    canvas=ROOT.TCanvas("canvas","",1024,768)
+    legend=ROOT.TLegend(0.2,0.78,0.85,0.89)
     legend.SetFillColor(0)
     legend.SetBorderSize(0)
     legend.SetNColumns(3);
+    cheader=ROOT.TLatex(0.1,0.94,"#sqrt{s} = 13 TeV, L = 10.0 fb^{-1}               CMS private work")
+    cheader.SetTextFont(42);
+#   cheader.SetTextSize(0.03);
+    cheader.SetNDC();
     #sort the yields in the right sample and category order
     #print CatFormats.sampleOrder
     orderedYields=[]
@@ -758,7 +1003,7 @@ class Categorizer:
       cat=cat[:1]+sorted(cat[1:],key=lambda x: CatFormats.sampleOrder.index(x[0]))
       orderedYields.append(cat)
     self.categoryYields=orderedYields
-    print self.categoryYields
+    #print self.categoryYields
     
     for sample in self.categoryYields[0][1:]:
       print sample
@@ -798,7 +1043,7 @@ class Categorizer:
       integral=thisHisto[1].Integral()
       #print thisHisto[0],integral
       legstring=name+" (%0.1f)" %integral
-      if thisHisto[0]=="tth" or thisHisto[0]=="ttH" or thisHisto[0]=="tthbb" or thisHisto[0]=="ttHbb":
+      if thisHisto[0]=="tth" or thisHisto[0]=="ttH" or thisHisto[0]=="tthbb" or thisHisto[0]=="ttHbb" or thisHisto[0]=="tthNonbb" or thisHisto[0]=="ttHNonbb":
         thisHisto[1].Scale(ttHScale)
         print thisHisto[1].GetLineWidth
         thisHisto[1].SetLineWidth(2)
@@ -824,6 +1069,8 @@ class Categorizer:
     if datahisto!="":
       datahisto[1].Draw("SAME")
     legend.Draw()
+    cheader.Draw()
+    canvas.SaveAs(self.outPath+"/Yields/YieldPlot.pdf")
     canvas.SaveAs(self.outPath+"/Yields/YieldPlot.eps")
     canvas.SaveAs(self.outPath+"/Yields/YieldPlot.root")
 

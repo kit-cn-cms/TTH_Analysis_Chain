@@ -87,10 +87,11 @@ nonttbarSampleTrees=[]
 for i, tree in enumerate(inTrees):
   if "ttbar" in tree and not "_l_" in tree and not "_bb_" in tree and not "_b_" in tree and not "_cc_" in tree and not "_2b_" in tree:
     ttbarSampleTrees.append(tree)
-  else:
+  elif not "_l_" in tree and not "_bb_" in tree and not "_b_" in tree and not "_cc_" in tree and not "_2b_" in tree:
     nonttbarSampleTrees.append(tree)
-#print ttbarSampleTrees
+print ttbarSampleTrees
 inTrees=nonttbarSampleTrees
+print inTrees
 
 
 for ttbarSample in ttbarSampleTrees:
@@ -104,7 +105,6 @@ print "splitting in categories"
 #loop over input samples an split them into the categories
 for tree in inTrees:
   Categorizer.SplitInCategoriesEvenOdd(tree)
-
 
 #make MCData.root
 print "creating MCData.root files"
