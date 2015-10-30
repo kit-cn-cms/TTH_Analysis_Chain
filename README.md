@@ -71,9 +71,14 @@ But the script is not very clever and you have to specify the number of samples 
 
 You can also convert the created histograms to be compatible with the Ohio way (see above) via "ConvertHistosToNova.py"  
 
-#### 4)
-Here a tool to calculate a ProfileLikelihood Limit with lots of toys will be provided.  
-It can parallelize toy creation on the batch system.  
-It already exists and will be updated soon(TM).  
+#### 3.1)
+The prefit expected Limit with MC toy datasets (instead of the asymptotic method) can be calculated with
+"combine datacard.txt -M HybridNew --testStat LHC  --generateExternalMeasurements 1 --generateNuisances 0 --grid=mygrid.root  --expectedFromGrid 0.5"
+where mygrid.root is a file containing results for different signal strength modifiers and "--expectedFromGrid" controls the quantile (the median in this case). For 1 sigma (2 sigma) bands use 0.16/0.84 (0.025/0.975) instead.
+The mygrid.root file can be created with "GetScales.py". Inside this script you will need to change the path to your CMSSW and combine installations.
+If you run the script it will create a number of batch scripts to be run on the NAF batchsystem with "./runAll.sh"
+If they are finished (takes some hours) add them all together with "hadd" -> mygrid.root.
+
+
 
 
