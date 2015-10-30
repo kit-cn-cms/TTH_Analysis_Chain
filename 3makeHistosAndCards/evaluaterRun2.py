@@ -34,7 +34,7 @@ class Evaluater:
         self.reader = ROOT.TMVA.Reader()
         self.arraylist=[]
         for var in self.variables:
-            self.arraylist.append( array('f',[0]) )
+            self.arraylist.append( array('f',[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]) )
             self.reader.AddVariable(str(var),self.arraylist[-1])
         self.reader.BookMVA("BDTG",self.weightfile)
         self.reader.SetVerbose(True)
@@ -52,7 +52,10 @@ class Evaluater:
         # init variables
         i=0                
         for var in self.variables:
-            #print var, type(var)
+           # print var, type(var)
+            if "[" in var:
+              var=var.split("[",1)[0]
+              #print var
             tree.SetBranchAddress( var, self.arraylist[i] )
             i+=1
         # init weight
@@ -64,6 +67,10 @@ class Evaluater:
         tree.SetBranchAddress("N_Jets",njets)
         csv0=array('f',[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0])
         tree.SetBranchAddress("CSV",csv0)
+        isttH=array('i',[0])
+        tree.SetBranchAddress("Istth",isttH)
+        isttbar=array('i',[0])
+        tree.SetBranchAddress("Isttbar",isttbar)
 
         sysweight=array('f',[1.])
         if weightname!="" :
@@ -106,11 +113,17 @@ class Evaluater:
               if njets[0]>3:
                 nless-=1
                 sysweight_1=1.0
-             
-            histo.Fill(output,weight[0]*sysweight_1*scale_1)
+            
+            datattbarweight=1.0
+            if "MCData" in path:
+              if isttH[0]==1 or isttbar[0]==1:
+                datattbarweight=2.0
+            histo.Fill(output,weight[0]*sysweight_1*scale_1*datattbarweight)
+        histo.SetBinContent(0,histo.GetBinContent(0)+histo.GetBinContent(1))
+        histo.SetBinContent(nBins,histo.GetBinContent(nBins)+histo.GetBinContent(nBins+1))
         outfile.cd()
         histo.Write()
-        print 'filled '+histoname+', integral: '+str(histo.Integral())
+        #print 'filled '+histoname+', integral: '+str(histo.Integral())
         #print nDiLepton
         #print n4, n5, n6, nless
         return histo.Integral()
@@ -125,6 +138,9 @@ class Evaluater:
       
       i=0                
       for var in self.variables:
+          if "[" in var:
+              var=var.split("[",1)[0]
+              #print var
           tree.SetBranchAddress( var, self.arraylist[i] )
           i+=1
       # init variables
@@ -135,11 +151,20 @@ class Evaluater:
       weight_xs=array('f',[1.])
       tree.SetBranchAddress( "Weight_XS", weight_xs )
       tree.SetBranchAddress( "Weight", weight )
+      csv0=array('f',[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0])
+      isttH=array('i',[0])
+      tree.SetBranchAddress("Istth",isttH)
+      isttbar=array('i',[0])
+      tree.SetBranchAddress("Isttbar",isttbar)
+      tree.SetBranchAddress("CSV",csv0)
       for ievt in range(tree.GetEntries()):
             tree.GetEntry(ievt)
             output = self.reader.EvaluateMVA("BDTG")
             scale_1=self.data.scale
-            data_hist.Fill(output,weight[0]*scale_1)
+            datattbarscale=1.0
+            if isttH[0]==1 or isttbar[0]==1:
+              datattbarscale=2.0
+            data_hist.Fill(output,weight[0]*scale_1*datattbarscale)
       f.Close()
       
       sig_hist=ROOT.TH1F("sig_hist","sig_hist",nBins,minX,maxX)
@@ -152,10 +177,15 @@ class Evaluater:
       # init weight
       i=0                
       for var in self.variables:
+          if "[" in var:
+              var=var.split("[",1)[0]
+              #print var
           tree.SetBranchAddress( var, self.arraylist[i] )
           i+=1
       weight=array('f',[1.])
       tree.SetBranchAddress( "Weight", weight )
+      csv0=array('f',[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0])
+      tree.SetBranchAddress("CSV",csv0)
       for ievt in range(tree.GetEntries()):
             tree.GetEntry(ievt)
             output = self.reader.EvaluateMVA("BDTG")
@@ -174,6 +204,9 @@ class Evaluater:
       # init variables
         j=0                
         for var in self.variables:
+            if "[" in var:
+              var=var.split("[",1)[0]
+              #print var
             tree.SetBranchAddress( var, self.arraylist[j] )
             j+=1
         #BDToutput = array('f', [0])
@@ -183,20 +216,22 @@ class Evaluater:
         weight_xs=array('f',[1.])
         tree.SetBranchAddress( "Weight_XS", weight_xs )
         tree.SetBranchAddress( "Weight", weight )
+        csv0=array('f',[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0])
+        tree.SetBranchAddress("CSV",csv0)
         for ievt in range(tree.GetEntries()):
             tree.GetEntry(ievt)
             output = self.reader.EvaluateMVA("BDTG")
             scale_1=sample.scale
             bkg_histos[i].Fill(output,weight[0]*scale_1)
         f.Close()
-        print len(bkg_histos), bkg_histos[i].Integral() 
+        #print len(bkg_histos), bkg_histos[i].Integral() 
       #do background sum
         if bkgSum_histo:
           bkgSum_histo.Add(bkg_histos[i])
         else:
           bkgSum_histo = bkg_histos[i].Clone()
         i+=1
-        print bkgSum_histo.Integral()
+        #print bkgSum_histo.Integral()
       
       # done reading the histos now check for small bins
       i=0
@@ -205,7 +240,7 @@ class Evaluater:
         if sample.name=="tth" or sample.name=="ttH":
           continue
         hist=bkg_histos[i].Clone()
-        print i
+        #print i
         for b in range(1,nBins+1):
           data = data_hist.GetBinContent(b)
           data_err = data_hist.GetBinError(b)
@@ -217,8 +252,8 @@ class Evaluater:
           val_err = hist.GetBinError(b)
           
           other_frac = ROOT.TMath.Sqrt(bkg_err**2 - val_err**2)
-          print sample.name, category, bkg, bkg_err, sig, sig_err, data, data_err
-          print sample.name, category, val, val_err, bkg_err, data_err/5., other_frac/bkg_err, sig/bkg
+          #print sample.name, category, bkg, bkg_err, sig, sig_err, data, data_err
+          #print sample.name, category, val, val_err, bkg_err, data_err/5., other_frac/bkg_err, sig/bkg
 
           #Changed from data_err/3 -> data_err/5 and sig/bkg < 0.02 -> 0.01 - KPL
           if val < .01 or bkg_err < data_err / 5. or other_frac / bkg_err > .95 or sig / bkg < .01:
@@ -231,14 +266,14 @@ class Evaluater:
           newValDown=val - val_err
           if newValDown<=0:
             newValDown=0.00001
-            print "!! setting statdown bin to ", newValDown
+            #print "!! setting statdown bin to ", newValDown
           hist_up.SetBinContent(b, newValUp)
           hist_down.SetBinContent(b, newValDown)                   
              
           outfile.cd()
           hist_up.Write()
           hist_down.Write()
-          print "wrote ", "output_Stat"+category+"_"+sample.name+"_AnnBin_"+str(b)
+          #print "wrote ", "output_Stat"+category+"_"+sample.name+"_AnnBin_"+str(b)
           datacard.write("Stat"+category+"_"+sample.name+"_AnnBin_"+str(b)+'\t')
           datacard.write('shape\t')
           for s in self.samples:
@@ -260,6 +295,9 @@ class Evaluater:
         newtree = oldtree.CloneTree(0)
         i=0                
         for var in self.variables:
+            if "[" in var:
+              var=var.split("[",1)[0]
+              #print var
             oldtree.SetBranchAddress( var, self.arraylist[i] )
             i+=1
         # init bdtoutput
@@ -352,7 +390,8 @@ class Evaluater:
             datacard.write('\n')
         
     def writelnNsys(self,datacard,cat=""):
-        datacard.write('lumi\tlnN\t1.045\t1.045\t1.045\t1.045\t1.045\t1.045\n')
+        # tth ttl ttb ttbb tt2b ttcc singlet diboson ttW ttZ ZJets
+        datacard.write('lumi\tlnN\t1.025\t1.025\t1.025\t1.025\t1.025\t1.025\t1.025\t1.025\t1.025\t1.025\n')
         #datacard.write('CMS_tth_eff_lep\tlnN\t1.014\t1.014\t1.014\t1.014\t1.014\t1.014\t1.014\t1.014\t1.014\n')
         #datacard.write('QCDscale_V\tlnN\t-\t-\t-\t-\t-\t-\t1.013\t1.012\t-\n')
         #datacard.write('QCDscale_VV\tlnN\t-\t-\t-\t-\t-\t-\t-\t-\t1.036\n')
@@ -391,10 +430,10 @@ class Evaluater:
            #datacard.write('Q2Scale_V\tlnN\t-\t-\t-\t-\t-\t-\t1.766\t1.766\t-\n')
 
         #datacard.write('QCDscale_tth\tlnN\t1.067\t-\t-\t-\t-\t-\t-\t-\t-\n')
-        datacard.write('QCDscale_ttbar\tlnN\t-\t1.03\t1.03\t1.03\t1.03\t1.03\n')
-        datacard.write('pdf_gg\tlnN\t1.083\t1.026\t1.026\t1.026\t1.026\t1.026\n')
-        datacard.write('pdf_qqbar\tlnN\t-\t-\t-\t-\t-\t-\n')
-        datacard.write('pdf_qg\tlnN\t-\t-\t-\t-\t-\t-\n')
+        datacard.write('QCDscale_ttbar\tlnN\t-\t1.036\t1.036\t1.036\t1.036\t1.036\t-\t-\t-\t-\n')
+        datacard.write('pdf_gg\tlnN\t1.092\t1.043\t1.043\t1.043\t1.043\t1.043\t-\t-\t-\t1.025\n')
+        datacard.write('pdf_qqbar\tlnN\t-\t-\t-\t-\t-\t-\t-\t-\t1.017\t-\n')
+        datacard.write('pdf_qg\tlnN\t-\t-\t-\t-\t-\t-\t1.048\t-\t-\t-\n')
 
         #datacard.write('CMS_res_j\tlnN\t1.015\t1.015\t1.015\t1.015\t1.015\t1.015\n')
         #datacard.write('CMS_tth_pu\tlnN\t1.01\t1.01\t1.01\t1.01\t1.01\t1.01\n')
@@ -416,6 +455,8 @@ class Evaluater:
             self.fillTree(p,sample.path.replace(".root","_output.root"))
             self.fillTree(sample.path.replace("nominal","JESUP"),sample.path.replace("_nominal.root","_JESUP_output.root"))
             self.fillTree(sample.path.replace("nominal","JESDOWN"),sample.path.replace("_nominal.root","_JESDOWN_output.root"))
+            self.fillTree(sample.path.replace("nominal","JERUP"),sample.path.replace("_nominal.root","_JERUP_output.root"))
+            self.fillTree(sample.path.replace("nominal","JERDOWN"),sample.path.replace("_nominal.root","_JERDOWN_output.root"))
 
             nominal_integrals.append(integral)
 
@@ -463,7 +504,7 @@ class Evaluater:
                 self.writeratesys(datacard,"QCDscale_"+sample.name,"lnN",{sample.name:1.+sample.constraint})
         self.writelnNsys(datacard,category)
         self.writeshapesys(datacard,self.systematics)
-        #self.doBinStatistics(outfile, p,category,datacard ,nBins, minX, maxX)
+        self.doBinStatistics(outfile, p,category,datacard ,nBins, minX, maxX)
         datacard.close()
         outfile.Close()
         call(['cp',"histos_"+category+"_"+bdtversion+".root","output/histos_"+category+"_"+bdtversion+".root"])
@@ -472,7 +513,7 @@ class Evaluater:
 #        call(['combine','-M','Asymptotic','datacard.txt','-t','-1'])
         file = open("output/Limit_"+category+"_"+bdtversion+".txt","w")
         #call(['combine','-v','0','-M', 'ProfileLikelihood' ,'datacard.txt', '-t' ,'10'],stdout=file)
-        call(['combine','-v','0','-M', 'Asymptotic','--minosAlgo','stepping' ,'datacard.txt', '--run=blind'],stdout=file)
+        #call(['combine','-v','0','-M', 'Asymptotic','--minosAlgo','stepping' ,'datacard.txt', '--run=blind'],stdout=file)
         file.close()
         
         
@@ -489,7 +530,8 @@ class Evaluater:
             self.fillTree(p,sample.path.replace(".root",outputsuffix+".root"),bdt)
             self.fillTree(sample.path.replace(".root","_JESUP.root"),sample.path.replace(".root",outputsuffix+"_JESUP.root"),bdt)
             self.fillTree(sample.path.replace(".root","_JESDOWN.root"),sample.path.replace(".root",outputsuffix+"_JESDOWN.root"),bdt)
-
+	    self.fillTree(sample.path.replace(".root","_JERUP.root"),sample.path.replace(".root",outputsuffix+"_JERUP.root"),bdt)
+            self.fillTree(sample.path.replace(".root","_JERDOWN.root"),sample.path.replace(".root",outputsuffix+"_JERDOWN.root"),bdt)
 ##old version of this function
     def GetHistoConfig(self, category):
       minX=-0.0
@@ -497,12 +539,18 @@ class Evaluater:
       nBins=10
       for sample in self.samples:
         print sample.name
+        if sample.name=="tth":
+          print "tth continuing"
+          continue
         f = ROOT.TFile( sample.path )
         tree     = f.Get("MVATree")
         bufferfile=ROOT.TFile("bufferfile.root","recreate")
         newtree = ROOT.TTree("bufferTree","bufferTree")
         i=0                
         for var in self.variables:
+            if "[" in var:
+              var=var.split("[",1)[0]
+              #print var
             tree.SetBranchAddress( var, self.arraylist[i] )
             i+=1
         # init bdtoutput
@@ -551,6 +599,8 @@ class Evaluater:
       elif category=="63":
         nBins=20
       elif category=="64":
+        nBins=10
+      elif category=="DB":
         nBins=10
       else:
         nBins = 10

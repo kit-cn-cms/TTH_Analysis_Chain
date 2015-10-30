@@ -98,8 +98,8 @@ f.write("EvalPath: "+evaluationPath+"\n\n")
 for var in variablesFinalbuffer:
   variablesFinal.append(str(var))
 
-print type(variablesFinal), variablesFinal, variablesFinal[2], type(variablesFinal[2])
-print variablesFinal[2], type(variablesFinal[2]), str(variablesFinal[2]), type(str(variablesFinal[2]))
+#print type(variablesFinal), variablesFinal, variablesFinal[2], type(variablesFinal[2])
+#print variablesFinal[2], type(variablesFinal[2]), str(variablesFinal[2]), type(str(variablesFinal[2]))
 
 ## these lines are used for a sub BDT chained before the final BDT, for example for ttbb
 #f.write("SubBDT Variables:\n")
@@ -124,7 +124,7 @@ f.write(str(variablesFinal)+"\n\n")
 #evaluaterSub.WriteBDTVars("","_SubBDT","Sub")
 
 print "Training Final BDT"
-trainerFinal=Trainer(trainingPath+"tthbb_nominal.root",trainingPath+"ttbar_nominal.root",evaluationPath+"tthbb_nominal.root",evaluationPath+"ttbar_nominal.root",FinalBDTOptions,variablesFinal,[],False,"weights/weights_Final_"+category+"_"+name+".xml")
+trainerFinal=Trainer(trainingPath+"tth_nominal.root",trainingPath+"ttbar_nominal.root",evaluationPath+"tth_nominal.root",evaluationPath+"ttbar_nominal.root",FinalBDTOptions,variablesFinal,[],False,"weights/weights_Final_"+category+"_"+name+".xml")
 trainerFinal.useTransformations(False)
 trainerFinal.setWeightExpression("Weight_XS")
 trainerFinal.run(variablesFinal,FinalBDTOptions)
@@ -133,7 +133,7 @@ f.write("FinalBDT Parameters:\n")
 f.write(FinalBDTOptions+"\n\n")
 f.close()
 
-samplesTrainingFinal=[Sample("tthbb",trainingPath+"tthbb_nominal.root",-1,1.),Sample("ttbar_light",trainingPath+"ttbar_l_nominal.root",.1,1.),Sample("ttbar_b",trainingPath+"ttbar_b_nominal.root",.5,1.),Sample("ttbar_bb",trainingPath+"ttbar_bb_nominal.root",.5,1.),Sample("ttbar_2b",trainingPath+"ttbar_2b_nominal.root",.5,1.),Sample("ttbar_cc",trainingPath+"ttbar_cc_nominal.root",.5,1.),Sample("ttbar",trainingPath+"ttbar_nominal.root",.1,1.)]
+samplesTrainingFinal=[Sample("tth",trainingPath+"tth_nominal.root",-1,1.),Sample("ttbar_light",trainingPath+"ttbar_l_nominal.root",.1,1.),Sample("ttbar_b",trainingPath+"ttbar_b_nominal.root",.5,1.),Sample("ttbar_bb",trainingPath+"ttbar_bb_nominal.root",.5,1.),Sample("ttbar_2b",trainingPath+"ttbar_2b_nominal.root",.5,1.),Sample("ttbar_cc",trainingPath+"ttbar_cc_nominal.root",.5,1.),Sample("ttbar",trainingPath+"ttbar_nominal.root",.1,1.),Sample("SingleT",trainingPath+"SingleT_nominal.root",0.031,1.),Sample("DiBoson",trainingPath+"DiBoson_nominal.root",0.07,1.),Sample("ttW",trainingPath+"ttW_nominal.root",0.139,1.),Sample("ttZ",trainingPath+"ttZ_nominal.root",0.124,1.)]
 dataTrain=Sample("data",trainingPath+"MCData.root",-1,1.)
 
 print "Writing FinalBDT output"
@@ -183,26 +183,28 @@ if doTestonTrain:
   print evaluationPath
   print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
-samplesTrainingForScales=[Sample("tthbb",trainingPath+"tthbb_nominal.root",-1,1.),Sample("ttbar_light",trainingPath+"ttbar_l_nominal.root",.1,1.),Sample("ttbar_b",trainingPath+"ttbar_b_nominal.root",.618,1.),Sample("ttbar_bb",trainingPath+"ttbar_bb_nominal.root",.618,1.),Sample("ttbar_2b",trainingPath+"ttbar_2b_nominal.root",.618,1.),Sample("ttbar_cc",trainingPath+"ttbar_cc_nominal.root",.618,1.),Sample("ttbar",trainingPath+"ttbar_nominal.root",.618,1.)]
+samplesTrainingForScales=[Sample("tth",trainingPath+"tth_nominal.root",-1,1.),Sample("ttbar_light",trainingPath+"ttbar_l_nominal.root",.1,1.),Sample("ttbar_b",trainingPath+"ttbar_b_nominal.root",.618,1.),Sample("ttbar_bb",trainingPath+"ttbar_bb_nominal.root",.618,1.),Sample("ttbar_2b",trainingPath+"ttbar_2b_nominal.root",.618,1.),Sample("ttbar_cc",trainingPath+"ttbar_cc_nominal.root",.618,1.),Sample("SingleT",trainingPath+"SingleT_nominal.root",0.031,1.),Sample("DiBoson",trainingPath+"DiBoson_nominal.root",0.07,1.),Sample("ttW",trainingPath+"ttW_nominal.root",0.139,1.),Sample("ttZ",trainingPath+"ttZ_nominal.root",0.124,1.)]
 dataTrainForScales=Sample("data",trainingPath+"MCData.root",-1,1.)
 
-samplesTest=[Sample("tthbb",evaluationPath+"tthbb_nominal.root",0.133,1.),Sample("ttbar_light",evaluationPath+"ttbar_l_nominal.root",-1,1.),Sample("ttbar_b",evaluationPath+"ttbar_b_nominal.root",0.618,1.),Sample("ttbar_bb",evaluationPath+"ttbar_bb_nominal.root",0.618,1.),Sample("ttbar_2b",evaluationPath+"ttbar_2b_nominal.root",0.618,1.),Sample("ttbar_cc",evaluationPath+"ttbar_cc_nominal.root",0.618,1.)]
+samplesTest=[Sample("tth",evaluationPath+"tth_nominal.root",0.097,1.),Sample("ttbar_light",evaluationPath+"ttbar_l_nominal.root",-1,1.),Sample("ttbar_b",evaluationPath+"ttbar_b_nominal.root",0.618,1.),Sample("ttbar_bb",evaluationPath+"ttbar_bb_nominal.root",0.618,1.),Sample("ttbar_2b",evaluationPath+"ttbar_2b_nominal.root",0.618,1.),Sample("ttbar_cc",evaluationPath+"ttbar_cc_nominal.root",0.618,1.),Sample("SingleT",evaluationPath+"SingleT_nominal.root",0.031,1.),Sample("DiBoson",evaluationPath+"DiBoson_nominal.root",0.07,1.),Sample("ttW",evaluationPath+"ttW_nominal.root",0.139,1.),Sample("ttZ",evaluationPath+"ttZ_nominal.root",0.124,1.)]
 dataTest=Sample("data",evaluationPath+"MCData.root",-1,1.)
 
 samplesEval=GetSampleScales(samplesTrainingForScales,samplesTest)
-data=GetSampleScales([dataTrainForScales],[dataTest])
-data=data[0]
+#data=GetSampleScales([dataTrainForScales],[dataTest])
+#data=data[0]
+data=dataTest
 
 systematics=[
              Systematic("CMS_scale_j","CMS_scale_jUp","_JESUP","","CMS_scale_jDown","_JESDOWN",""),
+             Systematic("CMS_res_r","CMS_res_rUp","_JERUP","","CMS_res_rDown","_JERDOWN",""),
              Systematic("CSVLF","CSVLFUp","","Weight_CSVLFup","CSVLFDown","","Weight_CSVLFdown"),
-             #Systematic("CSVHF","CSVHFUp","","Weight_CSVHFup","CSVHFDown","","Weight_CSVHFdown"),
+             Systematic("CSVHF","CSVHFUp","","Weight_CSVHFup","CSVHFDown","","Weight_CSVHFdown"),
              Systematic("CSVHFStats1","CSVHFStats1Up","","Weight_CSVHFStats1up","CSVHFStats1Down","","Weight_CSVHFStats1down"),
-             #Systematic("CSVLFStats1","CSVLFStats1Up","","Weight_CSVLFStats1up","CSVLFStats1Down","","Weight_CSVLFStats1down"),
+             Systematic("CSVLFStats1","CSVLFStats1Up","","Weight_CSVLFStats1up","CSVLFStats1Down","","Weight_CSVLFStats1down"),
              Systematic("CSVHFStats2","CSVHFStats2Up","","Weight_CSVHFStats2up","CSVHFStats2Down","","Weight_CSVHFStats2down"),
              Systematic("CSVLFStats2","CSVLFStats2Up","","Weight_CSVLFStats2up","CSVLFStats2Down","","Weight_CSVLFStats2down"),
-             #Systematic("CSVCErr1","CSVCErr1Up","","Weight_CSVCErr1up","CSVCErr1Down","","Weight_CSVCErr1down"),
-             #Systematic("CSVCErr2","CSVCErr2Up","","Weight_CSVCErr2up","CSVCErr2Down","","Weight_CSVCErr2down"),
+             Systematic("CSVCErr1","CSVCErr1Up","","Weight_CSVCErr1up","CSVCErr1Down","","Weight_CSVCErr1down"),
+             Systematic("CSVCErr2","CSVCErr2Up","","Weight_CSVCErr2up","CSVCErr2Down","","Weight_CSVCErr2down"),
              #Systematic("Q2Scale_ttbar_bb","Q2Scale_ttbar_bbUp","","Weight_Q2up","Q2Scale_ttbar_bbDown","","Weight_Q2down"),
              #Systematic("Q2Scale_ttbar_b","Q2Scale_ttbar_bUp","","Weight_Q2up","Q2Scale_ttbar_bDown","","Weight_Q2down"),
              #Systematic("Q2Scale_ttbar_cc","Q2Scale_ttbar_ccUp","","Weight_Q2up","Q2Scale_ttbar_ccDown","","Weight_Q2down"),

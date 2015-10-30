@@ -8,6 +8,8 @@ def GetSampleScales(trainSamples=[], testSamples=[]):
     print "\n---------------------------------------"
     print "checking scales for sample"
     print testSamples[i].name
+    print testSamples[i].path
+    print trainSamples[i].path
     SumWtrain=0
     SumWtest=0
     TotalSum=0
@@ -32,9 +34,15 @@ def GetSampleScales(trainSamples=[], testSamples=[]):
     SumWtrain=htrain.Integral()
     TotalSum=SumWtrain+SumWtest
     print testSamples[i].name, "Sum ", TotalSum
-    scale=TotalSum/SumWtest
-    print "scale for eval sample ", scale
+    if SumWtest>0:
+      scale=TotalSum/SumWtest
+    else:
+      scale=0
+    #print "scale for eval sample ", scale
     
+    if testSamples[i].name in ["DiBoson","SingleT","WJets","ZJets","ttW","ttZ"]:
+      scale=1.0
+    print "scale for eval sample ", scale
     outSampleEval.append(Sample(testSamples[i].name, testSamples[i].path, testSamples[i].constraint, scale))
     testTreeFile.Close()
     trainTreeFile.Close()
