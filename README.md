@@ -38,6 +38,11 @@ The script will also generate event yield tables and a plot.
 If you only want the tables and plot without preparing the samples you can use   
 "MakeYieldTablesAndPlots.py"  
 
+UPDATE: You can also use the "OnlyPrepareTrees.py" script in the directory ParallelChain.
+Before using you have to configure the Definitions.py file.
+At the moment the Data samples are not treated at all. Will come soon.
+
+
 #### 2) 
 At this point you can find a BDT configuration  
 - Play around with TMVA  
