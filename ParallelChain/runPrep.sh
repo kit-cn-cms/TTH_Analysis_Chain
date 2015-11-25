@@ -1,0 +1,1 @@
+qsub -l h=bird* -hard -l os=sld6 -l h_vmem=2000M -l s_vmem=2000M -cwd -S /bin/bash -o /afs/desy.de/user/k/kelmorab/NewChain/TTH_Analysis_Chain/ParallelChain//logs/\$JOB_NAME.o\$JOB_ID -e /afs/desy.de/user/k/kelmorab/NewChain/TTH_Analysis_Chain/ParallelChain//logs/\$JOB_NAME.e\$JOB_ID -q 'default.q' PreparationScripts/ttbar_513.sh
