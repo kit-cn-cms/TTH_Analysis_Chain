@@ -78,6 +78,11 @@ private:
   std::vector<TTree*> b_evenTrees;
   std::vector<TTree*> b_oddTrees;
   
+  std::vector<TFile*> outfiles;
+    
+  TString branchListFile="/afs/desy.de/user/k/kelmorab/NewChain/TTH_Analysis_Chain/ParallelChain/branchlist.txt";
+  std::vector<TString> relevantbranches;
+  
 };
 
 Splitter::Splitter(){
@@ -144,6 +149,22 @@ Splitter::Splitter(){
 
   }
   config.close();
+  
+  //setup up relevant branch
+  count=0;
+  readline=true;
+  std::ifstream branchff(branchListFile);
+  while(readline==true && count<5000){
+    count++;
+    branchff>>dump;
+    std::cout<<dump<<std::endl;
+    relevantbranches.push_back(dump);
+    
+    if(branchff.eof())readline=false;
+  }
+  branchff.close();
+
+  
   std::cout<<std::endl;
   std::cout<<InName<<std::endl;
   std::cout<<OutName<<std::endl;
@@ -170,22 +191,110 @@ Splitter::Splitter(){
   TFile* inTreeFile=new TFile(InName);
   inTree = (TTree*) inTreeFile->Get("MVATree");
   std::cout<<inTree<<std::endl;
+  inTree->SetBranchStatus("*",0);
+  for(int ib=0;ib<relevantbranches.size();ib++){
+    std::cout<<relevantbranches.at(ib)<<std::endl;
+    inTree->SetBranchStatus(relevantbranches.at(ib),1);
+  }
   
   std::cout<<"setting up Categories"<<std::endl;
   for(int icat=0;icat<nCats;icat++){
+    TString thisoutname=OutputDir+"/Category_"+CategoryNames.at(icat)+"/Even/"+OutName+"_"+Systematic+".root";
+    TFile* thisevenfile = new TFile(thisoutname,"RECREATE");
+    thisevenfile->cd();
+//     TTree* outevenTree = inTree->CloneTree(0);
     evenTrees.push_back(inTree->CloneTree(0));
+    outfiles.push_back(thisevenfile);
+    evenTrees.back()->SetAutoFlush(1);
+
+    std::cout<<thisevenfile<<std::endl;
+    std::cout<<evenTrees.back()->GetDirectory()<<" "<<evenTrees.back()->GetCurrentFile()<<std::endl;
+//     evenTrees.back()->GetDirectory()->Print();
+    
+    thisoutname=OutputDir+"/Category_"+CategoryNames.at(icat)+"/Odd/"+OutName+"_"+Systematic+".root";
+    TFile* thisoddfile = new TFile(thisoutname,"RECREATE");
+    thisoddfile->cd();
     oddTrees.push_back(inTree->CloneTree(0));
+    outfiles.push_back(thisoddfile);
+    std::cout<<thisoddfile<<std::endl;
+    std::cout<<oddTrees.back()->GetDirectory()<<" "<<oddTrees.back()->GetCurrentFile()<<std::endl;
+//     evenTrees.back()->GetDirectory()->Print();
+    oddTrees.back()->SetAutoFlush(1);
+
+	
     if(useFlavorSplitting){
+      thisoutname=OutputDir+"/Category_"+CategoryNames.at(icat)+"/Even/"+OutName+"_lf_"+Systematic+".root";
+      TFile* lf_thisevenfile = new TFile(thisoutname,"RECREATE");
+      lf_thisevenfile->cd();
       lf_evenTrees.push_back(inTree->CloneTree(0));
+      outfiles.push_back(lf_thisevenfile);
+      lf_evenTrees.back()->SetAutoFlush(1);
+      
+      thisoutname=OutputDir+"/Category_"+CategoryNames.at(icat)+"/Odd/"+OutName+"_lf_"+Systematic+".root";
+      TFile* lf_thisoddfile = new TFile(thisoutname,"RECREATE");
+      lf_thisoddfile->cd();
       lf_oddTrees.push_back(inTree->CloneTree(0));
+      outfiles.push_back(lf_thisoddfile);
+      lf_oddTrees.back()->SetAutoFlush(1);
+
+      thisoutname=OutputDir+"/Category_"+CategoryNames.at(icat)+"/Even/"+OutName+"_bb_"+Systematic+".root";
+      TFile* bb_thisevenfile = new TFile(thisoutname,"RECREATE");
+      bb_thisevenfile->cd();
       bb_evenTrees.push_back(inTree->CloneTree(0));
+       outfiles.push_back(bb_thisevenfile);
+            bb_evenTrees.back()->SetAutoFlush(1);
+
+      thisoutname=OutputDir+"/Category_"+CategoryNames.at(icat)+"/Odd/"+OutName+"_bb_"+Systematic+".root";
+      TFile* bb_thisoddfile = new TFile(thisoutname,"RECREATE");
+      bb_thisoddfile->cd();
       bb_oddTrees.push_back(inTree->CloneTree(0));
-      cc_evenTrees.push_back(inTree->CloneTree(0));
-      cc_oddTrees.push_back(inTree->CloneTree(0));
-      b2_evenTrees.push_back(inTree->CloneTree(0));
-      b2_oddTrees.push_back(inTree->CloneTree(0));
+      outfiles.push_back(bb_thisoddfile);
+            bb_oddTrees.back()->SetAutoFlush(1);
+
+      thisoutname=OutputDir+"/Category_"+CategoryNames.at(icat)+"/Even/"+OutName+"_b_"+Systematic+".root";
+      TFile* b_thisevenfile = new TFile(thisoutname,"RECREATE");
+      b_thisevenfile->cd();
       b_evenTrees.push_back(inTree->CloneTree(0));
+       outfiles.push_back(b_thisevenfile);
+            b_evenTrees.back()->SetAutoFlush(1);
+
+      thisoutname=OutputDir+"/Category_"+CategoryNames.at(icat)+"/Odd/"+OutName+"_b_"+Systematic+".root";
+      TFile* b_thisoddfile = new TFile(thisoutname,"RECREATE");
+      b_thisoddfile->cd();
       b_oddTrees.push_back(inTree->CloneTree(0));
+      outfiles.push_back(b_thisoddfile);
+       std::cout<<b_thisoddfile<<std::endl;
+    std::cout<< b_oddTrees.back()->GetDirectory()<<" "<< b_oddTrees.back()->GetCurrentFile()<<std::endl;
+            b_oddTrees.back()->SetAutoFlush(1);
+
+      thisoutname=OutputDir+"/Category_"+CategoryNames.at(icat)+"/Even/"+OutName+"_2b_"+Systematic+".root";
+      TFile* b2_thisevenfile = new TFile(thisoutname,"RECREATE");
+      b2_thisevenfile->cd();
+      b2_evenTrees.push_back(inTree->CloneTree(0));
+      outfiles.push_back(b2_thisevenfile);
+            b2_evenTrees.back()->SetAutoFlush(1);
+
+      thisoutname=OutputDir+"/Category_"+CategoryNames.at(icat)+"/Odd/"+OutName+"_2b_"+Systematic+".root";
+      TFile* b2_thisoddfile = new TFile(thisoutname,"RECREATE");
+      b2_thisoddfile->cd();
+      b2_oddTrees.push_back(inTree->CloneTree(0));
+      outfiles.push_back(b2_thisoddfile);
+            b2_oddTrees.back()->SetAutoFlush(1);
+
+      thisoutname=OutputDir+"/Category_"+CategoryNames.at(icat)+"/Even/"+OutName+"_cc_"+Systematic+".root";
+      TFile* cc_thisevenfile = new TFile(thisoutname,"RECREATE");
+      cc_thisevenfile->cd();
+      cc_evenTrees.push_back(inTree->CloneTree(0));
+       outfiles.push_back(cc_thisevenfile);
+            cc_evenTrees.back()->SetAutoFlush(1);
+
+      thisoutname=OutputDir+"/Category_"+CategoryNames.at(icat)+"/Odd/"+OutName+"_cc_"+Systematic+".root";
+      TFile* cc_thisoddfile = new TFile(thisoutname,"RECREATE");
+      cc_thisoddfile->cd();
+      cc_oddTrees.push_back(inTree->CloneTree(0));
+      outfiles.push_back(cc_thisoddfile);
+            cc_oddTrees.back()->SetAutoFlush(1);
+
     }
   }
   std::cout<<"done setting up Categories"<<std::endl;
@@ -219,7 +328,7 @@ Splitter::~Splitter(){
   delete weightFormula;
   
   delete inTree;  
-  for(int iTree=0;iTree<evenTrees.size();iTree++){
+  /*for(int iTree=0;iTree<evenTrees.size();iTree++){
     delete evenTrees.at(iTree);
     delete oddTrees.at(iTree);
   }
@@ -237,6 +346,7 @@ Splitter::~Splitter(){
     delete cc_oddTrees.at(iTree);
   }
   }
+  */
   for(int iform=0; iform<CatFormulas.size();iform++){
     delete CatFormulas.at(iform);
   }
@@ -246,6 +356,7 @@ Splitter::~Splitter(){
 void Splitter::PrepareTrees(){
   int nEventsTotal=inTree->GetEntries();
   for(long ievt=0; ievt<nEventsTotal; ievt++){
+//     useFlavorSplitting=false;
     if(ievt%100==0)std::cout<<"at event "<<ievt<<std::endl;
     inTree->GetEntry(ievt);
     bool isEven=false;
@@ -281,7 +392,7 @@ void Splitter::PrepareTrees(){
   
   std::cout<<"saving Trees"<<std::endl;
   // save trees 
-  for(int icat=0;icat<nCats;icat++){
+  /*for(int icat=0;icat<nCats;icat++){
     TString thisoutname=OutputDir+"/Category_"+CategoryNames.at(icat)+"/Even/"+OutName+"_"+Systematic+".root";
     TFile* thisevenfile = new TFile(thisoutname,"RECREATE");
     thisevenfile->cd();
@@ -371,7 +482,46 @@ void Splitter::PrepareTrees(){
   delete thisevenfile;
   delete thisoddfile;
 
+  }*/
+  
+  for(int icat=0;icat<nCats;icat++){
+    evenTrees.at(icat)->AutoSave();
+    if(useFlavorSplitting){
+      lf_evenTrees.at(icat)->AutoSave();
+      
+      bb_evenTrees.at(icat)->AutoSave();
+      
+      b2_evenTrees.at(icat)->AutoSave();
+      
+      b_evenTrees.at(icat)->AutoSave();
+      
+      cc_evenTrees.at(icat)->AutoSave();
+      
+    }
+    
+    
+    oddTrees.at(icat)->AutoSave();
+    
+    if(useFlavorSplitting){
+      
+      lf_oddTrees.at(icat)->AutoSave();
+      
+      bb_oddTrees.at(icat)->AutoSave();
+      
+      b2_oddTrees.at(icat)->AutoSave();
+      
+      b_oddTrees.at(icat)->AutoSave();
+      
+      cc_oddTrees.at(icat)->AutoSave();
+
+    }
   }
+  
+  for(int ifile=0; ifile<outfiles.size();ifile++){
+    outfiles.at(ifile)->Close();
+  }
+    
+  
   std::cout<<"done saving Trees"<<std::endl;
 }
 
