@@ -80,7 +80,8 @@ private:
   
   std::vector<TFile*> outfiles;
     
-  TString branchListFile="/afs/desy.de/user/k/kelmorab/NewChain/TTH_Analysis_Chain/ParallelChain/branchlist.txt";
+//   TString branchListFile="/afs/desy.de/user/k/kelmorab/NewChain/TTH_Analysis_Chain/ParallelChain/branchlist.txt";
+  TString branchListFile="";
   std::vector<TString> relevantbranches;
   
 };
@@ -153,6 +154,7 @@ Splitter::Splitter(){
   //setup up relevant branch
   count=0;
   readline=true;
+  if(branchListFile!=""){
   std::ifstream branchff(branchListFile);
   while(readline==true && count<5000){
     count++;
@@ -163,7 +165,10 @@ Splitter::Splitter(){
     if(branchff.eof())readline=false;
   }
   branchff.close();
-
+  }
+  else{
+    std::cout<<"copying all branches"<<std::endl;
+  }
   
   std::cout<<std::endl;
   std::cout<<InName<<std::endl;
@@ -192,11 +197,15 @@ Splitter::Splitter(){
   inTree = (TTree*) inTreeFile->Get("MVATree");
   std::cout<<inTree<<std::endl;
   inTree->SetBranchStatus("*",0);
+  if(relevantbranches.size()>0){
   for(int ib=0;ib<relevantbranches.size();ib++){
     std::cout<<relevantbranches.at(ib)<<std::endl;
     inTree->SetBranchStatus(relevantbranches.at(ib),1);
   }
-  
+  }
+  else{
+    inTree->SetBranchStatus("*",1);
+  }
   std::cout<<"setting up Categories"<<std::endl;
   for(int icat=0;icat<nCats;icat++){
     TString thisoutname=OutputDir+"/Category_"+CategoryNames.at(icat)+"/Even/"+OutName+"_"+Systematic+".root";
