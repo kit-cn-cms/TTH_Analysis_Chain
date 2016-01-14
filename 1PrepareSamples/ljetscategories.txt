@@ -1,0 +1,28 @@
+categories 42 43 44 52 53 54 62 63 64
+
+42 N_Jets == 4
+42 N_BTagsM == 2
+
+43 N_Jets == 4
+43 N_BTagsM == 3
+
+44 N_Jets == 4
+44 N_BTagsM >= 4
+
+52 N_Jets == 5
+52 N_BTagsM == 2
+
+53 N_Jets == 5
+53 N_BTagsM == 3
+
+54 N_Jets == 5
+54 N_BTagsM >= 4
+
+62 N_Jets >= 6
+62 N_BTagsM == 2
+
+63 N_Jets >= 6
+63 N_BTagsM == 3
+
+64 N_Jets >= 6
+64 N_BTagsM >= 4

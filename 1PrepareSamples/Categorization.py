@@ -952,7 +952,8 @@ class Categorizer:
         roundto=max(1,-int(floor(log10(abs(bkgerrs)))))
       else:
         roundto=1
-      byld="$"+str(round(bkg,roundto))+" \pm "+str(round(bkgerrs,roundto))+"$"  
+#      byld="$"+str(round(bkg,roundto))+" \pm "+str(round(bkgerrs,roundto))+"$"  
+      byld="$"+str(round(bkg,roundto))+"$"  
 #      byld="$%0.1f \pm %0.1f$" %(bkg, bkgerrs)
       bkgSums.append(byld)
     out.write("\\hline\n")
@@ -1216,3 +1217,157 @@ class Categorizer:
     print "hadding done"
       
     #print self.categoryYields
+
+#--------------------------------------------------
+  def OnlyGetYieldsFastChain(self,inPath,intrees,weight="Weight"):
+    
+    inTreeName=inPath.rsplit("/",1)[1]
+    if "JESUP" in inTreeName or "JESDOWN" in inTreeName and "JERDOWN" not in inTreeName and "JERUP" not in inTreeName:
+      return 0
+    #print samplename
+    print "counting events in ", inPath
+    samplename=inTreeName
+    origname=samplename
+    #print samplename
+      
+
+#    oldfile = ROOT.TChain( inPath )
+    oldtree = ROOT.TChain( "MVATree" )
+    oldtree.Add(inPath+"/"+intrees)
+    print oldtree.GetNtrees()
+    #oldtree.SetBranchStatus("*",0)
+    nentries =oldtree.GetEntries()
+      
+    #oldtree.SetBranchStatus("N_Jets",1)
+    #oldtree.SetBranchStatus("N_BTagsM",1)
+    #oldtree.SetBranchStatus("Jet_Pt",1)
+    #oldtree.SetBranchStatus("BoostedTopHiggs_TopHadCandidate_TopMVAOutput",1)
+    #oldtree.SetBranchStatus("BoostedTopHiggs_HiggsCandidate_HiggsTag",1)
+    #oldtree.SetBranchStatus("BoostedHiggs_HiggsCandidate_HiggsTag",1)
+    #oldtree.SetBranchStatus("BoostedHiggs_N_BTagsM_Clean_ak5Jets",1)
+    #oldtree.SetBranchStatus("BoostedTop_N_BTagsM_Clean_ak5Jets",1)
+    #oldtree.SetBranchStatus("Weight",1)
+    #oldtree.SetBranchStatus("Evt_ID",1)
+    #oldtree.SetBranchStatus("GenEvt_I_TTPlusCC",1)
+    #oldtree.SetBranchStatus("GenEvt_I_TTPlusBB",1)
+    #oldtree.SetBranchStatus("Evt_HT",1)
+
+    if "JESUP" not in inTreeName and "JESDOWN" not in inTreeName and "JERDOWN" not in inTreeName and "JERUP" not in inTreeName:
+      if "ttbar" in inTreeName or "TTbar" in inTreeName:
+        for cat in self.categoryYields:
+          cat.append([samplename+"_l",0.0])
+          cat.append([samplename+"_bb",0.0])
+          cat.append([samplename+"_b",0.0])
+          cat.append([samplename+"_cc",0.0])
+          cat.append([samplename+"_2b",0.0])
+      else:
+        for cat in self.categoryYields:
+          cat.append([samplename,0.0])
+    #print self.categoryYields
+    
+    for c in self.categoryYields:
+      selection=weight+"*("
+      for cat in self.categories:
+        greedyCats=[]
+        if c[0]==cat[0]:
+          selection+="("
+          for cut in cat[1:]:
+            if "Greed" in cut[0]:
+              for gc in self.categories:
+                if gc[0] in cut[0] and "=="==cut[1] and 1==cut[2]:
+                  greedyCats.append(gc[0])
+                  #print "Greedy ",gc[0]
+              continue
+            selection+=str(cut[0])+str(cut[1])+str(cut[2])
+            selection+=" && "
+          selection=selection.rsplit("&&",1)[0]
+          #print selection
+          selection+=") && "
+          #print selection
+          for gc in self.categories:
+            if gc[0] in greedyCats:
+              selection+="!("
+              for cut in gc[1:]:
+                #print cut
+                if "Greed" in cut[0]:
+                  continue
+                selection+=str(cut[0])+str(cut[1])+str(cut[2])
+                selection+=" && "
+                #print selection
+              selection=selection.rsplit("&&",1)[0]
+              #print selection
+              selection+=") && "
+      selection=selection.rsplit("&&",1)[0]
+      selection+=")"
+      #print " "
+      #print selection
+      #print ""
+      if "ttbar" in inTreeName or "TTbar" in inTreeName:
+        samplename=origname+"_bb"
+        selection=selection.rsplit(")",1)[0]
+        selection+=" && GenEvt_I_TTPlusBB==3)"
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
+        oldtree.Draw("Evt_HT>>bufferHisto",selection)
+        integral=bufferHisto.Integral()
+        for s in c[1:]:
+          if samplename==s[0]:
+            s[1]=integral
+            #print samplename, integral
+        
+        samplename=origname+"_b"
+        selection=selection.replace("GenEvt_I_TTPlusBB==3","GenEvt_I_TTPlusBB==1")
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
+        oldtree.Draw("Evt_HT>>bufferHisto",selection)
+        integral=bufferHisto.Integral()
+        for s in c[1:]:
+          if samplename==s[0]:
+            s[1]=integral
+            #print samplename, integral
+        
+        samplename=origname+"_cc"
+        selection=selection.replace("GenEvt_I_TTPlusBB==1","GenEvt_I_TTPlusCC==1")
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
+        oldtree.Draw("Evt_HT>>bufferHisto",selection)
+        integral=bufferHisto.Integral()
+        for s in c[1:]:
+          if samplename==s[0]:
+            s[1]=integral
+            #print samplename, integral
+            
+        samplename=origname+"_l"
+        selection=selection.replace("GenEvt_I_TTPlusCC==1","GenEvt_I_TTPlusBB==0 && GenEvt_I_TTPlusCC==0")
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
+        oldtree.Draw("Evt_HT>>bufferHisto",selection)
+        integral=bufferHisto.Integral()
+        for s in c[1:]:
+          if samplename==s[0]:
+            s[1]=integral
+            #print samplename, integral
+        
+        samplename=origname+"_2b"
+        selection=selection.replace("GenEvt_I_TTPlusBB==0 && GenEvt_I_TTPlusCC==0","GenEvt_I_TTPlusBB==2")
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
+        oldtree.Draw("Evt_HT>>bufferHisto",selection)
+        integral=bufferHisto.Integral()
+        for s in c[1:]:
+          if samplename==s[0]:
+            s[1]=integral
+            #print samplename, integral
+        
+      else:
+        bufferHisto=ROOT.TH1D("bufferHisto","bufferHisto",1000,oldtree.GetMinimum("Evt_HT")-1.0,oldtree.GetMaximum("Evt_HT")+1.0)
+        oldtree.Draw("Evt_HT>>bufferHisto",selection)
+        integral=bufferHisto.Integral()
+        for s in c[1:]:
+          if samplename==s[0]:
+            s[1]=integral
+            #print "integral ",integral
+            
+    #oldfile.Close()
+    print self.categoryYields
+    print "done counting\n", inPath
+
+
+
+#--------------------------------------------------
+

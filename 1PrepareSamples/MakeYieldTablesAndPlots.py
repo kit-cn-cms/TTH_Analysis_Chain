@@ -74,7 +74,7 @@ Categorizer=Categorization.Categorizer(CatDefFile,outPath,DoDebugMode)
 
 if hasLog==False:
   for tree in inTrees:
-    Categorizer.OnlyGetYieldsFastWerrors(tree)
+    Categorizer.OnlyGetYieldsFast(tree)
 else:
   Categorizer.ReadCategoryYieldsFromLogLines(loglines)
 
