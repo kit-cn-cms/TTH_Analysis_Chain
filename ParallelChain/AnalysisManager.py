@@ -1,7 +1,6 @@
 import ROOT
 from array import array
 from subprocess import call
-from particle import Particle
 from QueHelper import QueHelper
 import time as timer
 import sys
@@ -33,7 +32,7 @@ class AnalysisManager:
 
     def CreateOutTreePaths(self):
       if not os.path.exists(self.OutputDirectoryForPreparedTrees):
-	os.makedirs('workdir')
+	os.makedirs(self.OutputDirectoryForPreparedTrees)
       for cat in self.Categories:
 	catname=cat[0]
 	if not os.path.exists(self.OutputDirectoryForPreparedTrees+'/Category_'+catname):
@@ -56,7 +55,7 @@ class AnalysisManager:
 	  #print ss, inpath
 	  indir=check_output(["dir","-1",inpath]).splitlines()
           for rf in indir:
-	    if ".root" in rf:
+	    if ".root" in rf and "nominal" in rf:
 	      newsample.ListOfRawInputTrees.append(inpath+"/"+rf)
         #print newsample.ListOfRawInputTrees
         self.MCSamples.append(newsample)
@@ -70,7 +69,8 @@ class AnalysisManager:
 	  #print inpath
 	  indir=check_output(["dir","-1",inpath]).splitlines()
           for rf in indir:
-	    if ".root" in rf and "nominal":
+	    #if ".root" in rf and "nominal":
+	    if ".root" in rf:
 	      newsample.ListOfRawInputTrees.append(inpath+"/"+rf)
         #print newsample.ListOfRawInputTrees
         self.DataSamples.append(newsample)
@@ -116,12 +116,13 @@ class AnalysisManager:
 	  os.chmod("PreparationScripts/"+sample.ProcessName+"_"+str(i)+".sh", st.st_mode | stat.S_IEXEC)
 	  configlines=[]
 	  configlines.append("INNAME "+f+"\n")
-	  configlines.append("OUTNAME "+sample.ProcessName+"_"+str(i)+"_"+thisSys+"\n")
+	  configlines.append("OUTNAME "+sample.ProcessName+"_"+str(i)+"\n")
 	  configlines.append("OUTDIR "+self.OutputDirectoryForPreparedTrees+"\n")
 	  for cat in self.Categories:
 	    configlines.append("CATEGORY "+cat[0]+" "+cat[1]+"\n")
 	  configlines.append("SPLITMODE "+sample.SplitMode+"\n")
 	  configlines.append("FLAVORSPLITTING "+sample.UseFlavorSplitting+"\n")
+	  configlines.append("SYSTEMATIC "+thisSys+"\n")
 
 	  conf=open(self.Path+"/PreparationScripts/PrepConfig_"+sample.ProcessName+"_"+str(i)+".txt","w")
 	  for ll in configlines:
