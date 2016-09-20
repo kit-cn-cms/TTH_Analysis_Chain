@@ -10,6 +10,7 @@ import os
 import Sample
 from subprocess import check_output
 import stat
+import glob
 
 
 class AnalysisManager:
@@ -53,27 +54,29 @@ class AnalysisManager:
 	for ss in mc[1]:
 	  inpath=self.MCinputDirectory+"/"+ss
 	  #print ss, inpath
-	  indir=check_output(["dir","-1",inpath]).splitlines()
-          for rf in indir:
-	    if ".root" in rf and "nominal" in rf:
-	      newsample.ListOfRawInputTrees.append(inpath+"/"+rf)
-        #print newsample.ListOfRawInputTrees
+	  #indir=check_output(["dir","-1",inpath]).splitlines()
+          #for rf in indir:
+	    #if ".root" in rf and "nominal" in rf:
+	      #newsample.ListOfRawInputTrees.append(inpath+"/"+rf)
+	  newsample.ListOfRawInputTrees+=glob.glob(inpath)    
+        print newsample.ListOfRawInputTrees
+        raw_input()
         self.MCSamples.append(newsample)
         
-      for data in self.DATASamplesDefinitions:
-	#print data
-	newsample=Sample.Sample()
-	newsample.ProcessName=data[0]
-	for ss in data[1]:
-	  inpath=self.DATAinputDirectory+"/"+ss
-	  #print inpath
-	  indir=check_output(["dir","-1",inpath]).splitlines()
-          for rf in indir:
-	    #if ".root" in rf and "nominal":
-	    if ".root" in rf:
-	      newsample.ListOfRawInputTrees.append(inpath+"/"+rf)
-        #print newsample.ListOfRawInputTrees
-        self.DataSamples.append(newsample)
+      #for data in self.DATASamplesDefinitions:
+	##print data
+	#newsample=Sample.Sample()
+	#newsample.ProcessName=data[0]
+	#for ss in data[1]:
+	  #inpath=self.DATAinputDirectory+"/"+ss
+	  ##print inpath
+	  #indir=check_output(["dir","-1",inpath]).splitlines()
+          #for rf in indir:
+	    ##if ".root" in rf and "nominal":
+	    #if ".root" in rf:
+	      #newsample.ListOfRawInputTrees.append(inpath+"/"+rf)
+        ##print newsample.ListOfRawInputTrees
+        #self.DataSamples.append(newsample)
       print "sat up intrees"
       
       

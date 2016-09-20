@@ -82,7 +82,7 @@ class QueHelper:
           "eval `scram runtime -sh`\n"
           ]
       self.RunLines=[
-          "qsub -l h=bird* -hard -l os=sld6 -l h_vmem=2000M -l s_vmem=2000M -cwd -S /bin/bash -o INSERTPATHHERE/logs/\$JOB_NAME.o\$JOB_ID -e INSERTPATHHERE/logs/\$JOB_NAME.e\$JOB_ID -q 'default.q' INSERTEXECSCRIPTHERE\n"
+          "qsub -l h=bird* -hard -l os=sld6 -l h_vmem=4000M -l s_vmem=4000M -cwd -S /bin/bash -o INSERTPATHHERE/logs/\$JOB_NAME.o\$JOB_ID -e INSERTPATHHERE/logs/\$JOB_NAME.e\$JOB_ID -q 'default.q' INSERTEXECSCRIPTHERE\n"
           ] 
     elif RunSystem=="NAFSL5":
       self.ExecLines=[

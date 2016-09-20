@@ -2,7 +2,7 @@
 
 
 
-OutputDirectoryForPreparedTrees="/nfs/dust/cms/user/kelmorab/MEMstudies/PreparedTrees/"
+OutputDirectoryForPreparedTrees="/nfs/dust/cms/user/kelmorab/SplitTrees80XplusBoosted"
 #CategoryDefinitionFile="/afs/desy.de/user/k/kelmorab/NewChain/TTH_Analysis_Chain/GreedyDBoostedCategories.txt"
 #Categories=[
   #["43","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets==4 && N_BTagsM==3 && !(BoostedTopHiggs_TopHadCandidate_TopMVAOutput > -0.1650 && BoostedTopHiggs_HiggsCandidate_HiggsTag >= 0.9425))"],
@@ -15,26 +15,43 @@ OutputDirectoryForPreparedTrees="/nfs/dust/cms/user/kelmorab/MEMstudies/Prepared
   #["DB","(N_LooseLeptons==1 && N_TightLeptons==1 && BoostedTopHiggs_TopHadCandidate_TopMVAOutput > -0.1650 && BoostedTopHiggs_HiggsCandidate_HiggsTag >= 0.9425)"],
 
 #]
+boosted="BoostedTopHiggs_TopHadCandidate_TopMVAOutput >= -0.485 && BoostedTopHiggs_HiggsCandidate_HiggsTag >= 0.8925"
 
 Categories=[
+  ["42","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets==4 && N_BTagsM==2 && !("+boosted+"))"],
+  ["52","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets==5 && N_BTagsM==2 && !("+boosted+"))"],
+  ["43","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets==4 && N_BTagsM==3 && !("+boosted+"))"],
+  ["44","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets==4 && N_BTagsM==4 && !("+boosted+"))"],
+  ["53","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets==5 && N_BTagsM==3 && !("+boosted+"))"],
+  ["54","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets==5 && N_BTagsM>=4 && !("+boosted+"))"],
+  ["62","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets>=6 && N_BTagsM==2 && !("+boosted+"))"],
+  ["63","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets>=6 && N_BTagsM==3 && !("+boosted+"))"],
+  ["64","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets>=6 && N_BTagsM>=4 && !("+boosted+"))"],
+  ["boosted","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets>=4 && N_BTagsM>=2 && ("+boosted+"))"],
+]
+
+
+#Categories=[
   #["43","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets==4 && N_BTagsM==3)"],
   #["44","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets==4 && N_BTagsM==4)"],
   #["53","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets==5 && N_BTagsM==3)"],
   #["54","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets==5 && N_BTagsM>=4)"],
   #["62","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets>=6 && N_BTagsM==2)"],
   #["63","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets>=6 && N_BTagsM==3)"],
-  ["64","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets>=6 && N_BTagsM>=4)"],
-]
+  #["64","(N_LooseLeptons==1 && N_TightLeptons==1 && N_Jets>=6 && N_BTagsM>=4)"],
+#]
+
+
 
 SystematicTreeNames=["nominal"]
 
-
-MCinputDirectory="/nfs/dust/cms/user/kelmorab/MEMstudies/newTrees/"
+MCinputDirectory="/nfs/dust/cms/user/kelmorab/samples80X_ICHEP_V1/"
 #List of MCSamples
 # ["ProcessName", [List of input folders], SplitMode="None" or "EvenOdd" , BOOL UseFlavorSplitting, RateSystematics=[["lumi",1.025],[], ShapeSystematics=[["lumi",1.025],[]]
 MCSamples=[
-	["ttH",["ttHbb"],"EvenOdd","False",[["lumi",1.025],["pdf",1.03]],[]],
-	["ttbar",["ttbar"],"EvenOdd","True",[["lumi",1.025],["pdf",1.03]],[]],
+	["ttHbb",["ttHbb/ttHbb*nominal*.root"],"EvenOdd","False",[["lumi",1.025],["pdf",1.03]],[]],
+	["ttHnonbb",["ttHnonbb/ttHnonbb*nominal*.root"],"EvenOdd","False",[["lumi",1.025],["pdf",1.03]],[]],
+	["ttbar",["ttbar_incl_All/ttbar*nominal*.root"],"EvenOdd","False",[["lumi",1.025],["pdf",1.03]],[]],
 	#["SingleT",["st_tchan","stbar_tchan","st_schan","stbar_tWchan","st_tWchan"],"EvenOdd","False",[["lumi",1.025],["pdf",1.03]],[]],
 	#["WJets",["Wjets"],"EvenOdd","False",[["lumi",1.025],["pdf",1.03]],[]],
 	#["ZJets",["Zjets_m10to50","Zjets_m50toInf"],"EvenOdd","False",[["lumi",1.025],["pdf",1.03]],[]],
@@ -45,11 +62,11 @@ MCSamples=[
 
 ]
 
-DATAinputDirectory="/nfs/dust/cms/user/hmildner/trees1122/"
+#DATAinputDirectory="/nfs/dust/cms/user/hmildner/trees1122/"
 # ["Data", [List of input folders]]
-DataSamples=[
-	["Data",["mu_reminiaod"]]
-	]
-
-     
-
+#DataSamples=[#
+#	["Data",["mu_reminiaod"]]
+#	]
+#
+DataSamples=[]
+DATAinputDirectory=""
