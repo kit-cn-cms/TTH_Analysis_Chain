@@ -1,0 +1,2 @@
+variables=['BDT_common5_input_avg_btag_disc_btags', 'Evt_Deta_JetsAverage', 'BDT_common5_input_h3', 'BDT_common5_input_HT', 'BDT_common5_input_fourth_jet_pt', 'BDT_common5_input_pt_all_jets_over_E_all_jets', 'BDT_common5_input_first_jet_pt', 'BDT_common5_input_second_jet_pt']
+BDTOptions=!H:!V:NTrees=300:BoostType=Grad:Shrinkage=0.001:UseBaggedBoost:GradBaggingFraction=0.1:nCuts=11:MaxDepth=2:NegWeightTreatment=IgnoreNegWeightsInTraining

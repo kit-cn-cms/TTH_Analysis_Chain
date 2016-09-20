@@ -1,0 +1,2 @@
+variables=['Evt_H0', 'Evt_blr_ETH_transformed', 'BDT_common5_input_all_sum_pt_with_met', 'Evt_Deta_JetsAverage', 'BDT_common5_input_Mlb', 'BDT_common5_input_min_dr_tagged_jets', 'Evt_Dr_MinDeltaRLeptonJet', 'BDT_common5_input_HT', 'Evt_M_MinDeltaRUntaggedJets', 'Evt_Dr_MinDeltaRJets', 'Evt_TaggedJet_MaxDeta_Jets', 'Evt_M_Total', 'BDT_common5_input_h3']
+BDTOptions=!H:!V:NTrees=351:BoostType=Grad:Shrinkage=0.0317973455362:UseBaggedBoost:GradBaggingFraction=0.241198201225:nCuts=32:MaxDepth=2:NegWeightTreatment=IgnoreNegWeightsInTraining
